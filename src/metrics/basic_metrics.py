@@ -136,7 +136,7 @@ class ConfidenceConsistencyEvaluation:
     4. 通过不确定度与真实标签的一致性来评估模型
     """
     
-    def __init__(self,  method='bayesian', confidence_level=0.5, n_bootstrap_samples=100):
+    def __init__(self,  method='bayesian', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False):
         """
         初始化评估器
         
@@ -147,6 +147,7 @@ class ConfidenceConsistencyEvaluation:
         self.n_bootstrap_samples = n_bootstrap_samples
         self.confidence_level = confidence_level
         self.method = method
+        self.positive_constraint = positive_constraint
     
     def estimate_uncertainty(self, model_scores, method='bayesian'):
         """
@@ -235,23 +236,31 @@ class ConfidenceConsistencyEvaluation:
         """
         计算基于不确定度的异常检测评估分数
         """
-        score = self.compute_uncertainty_consistency_score(y_true, y_scores, self.method)
+        score = self.compute_confidence_consistency_score(y_true, y_scores, self.method)
         return {
-            'uncertainty_consistency_score': score,
+            'confidence_consistency_score': score,
         }
         
     def _anom_event_score(self, y_score):
         mu = np.mean(y_score)
         uncertainty = self.estimate_uncertainty(y_score, self.method)
         consistency = np.exp(-uncertainty)
-        score = max((mu - self.confidence_level),0) * consistency
+        if self.positive_constraint:
+            confidence = max(mu - self.confidence_level,0)
+        else:
+            confidence = mu - self.confidence_level
+        score = confidence * consistency
         return score
     
     def _normal_event_score(self, y_score):
         mu = np.mean(y_score)
         uncertainty = self.estimate_uncertainty(y_score, self.method)
         consistency = np.exp(-uncertainty)
-        score = max((0.5 - self.confidence_level),0) * consistency
+        if self.positive_constraint:
+            confidence = max(1 - self.confidence_level - mu,0)
+        else:
+            confidence = 1 - self.confidence_level - mu
+        score = confidence * consistency
         return score
     
     def _event_score(self, anom_uncertainty,normal_uncertainty):
@@ -268,7 +277,7 @@ class ConfidenceConsistencyEvaluation:
         glo_score = 2 * glo_anom_score * glo_norm_score / (glo_anom_score + glo_norm_score + 1e-8)
         return glo_score
     
-    def compute_uncertainty_consistency_score(self, y_true, y_scores):
+    def compute_confidence_consistency_score(self, y_true, y_scores):
         """
         计算基于不确定度的异常检测评估分数
         
@@ -376,7 +385,7 @@ class basic_metricor():
     
     def metric_UCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30):
         uce = ConfidenceConsistencyEvaluation(method, n_samples, confidence_level)
-        score = uce.compute_uncertainty_consistency_score(labels, scores, method)
+        score = uce.compute_confidence_consistency_score(labels, scores, method)
         return score
 
     def metric_PA_percentile_K(self, labels, score, preds=None, num_K=100):
