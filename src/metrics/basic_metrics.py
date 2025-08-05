@@ -124,8 +124,8 @@ def convert_vector_to_events(vector = [0, 1, 1, 0, 0, 1, 0]):
     return (events)
 
 
-class UncertaintyConsistencyEvaluation:
-    # or name "UncertaintyConsistencyAwareAnomalyMetric"
+class ConfidenceConsistencyEvaluation:
+    # or name "ConfidenceConsistencyAnomalyMetric"
     """
     基于不确定度的异常检测评估指标
     
@@ -210,18 +210,18 @@ class UncertaintyConsistencyEvaluation:
         
         return uncertainty
     
-    def _bayesian_uncertainty(self, model_scores):
+    def _bayesian_uncertainty(self, model_scores, scale=10):
         """
         使用贝叶斯方法估计不确定度
         """
         # 使用Beta分布建模分数的不确定性
         # 将分数转换为Beta分布的参数
-        alpha = model_scores * 10 + 1  # 避免参数为0
-        beta = (1 - model_scores) * 10 + 1
+        alpha = model_scores * scale + 1  # 避免参数为0
+        beta = (1 - model_scores) * scale + 1
         
         # 计算Beta分布的方差作为不确定度
         uncertainty = (alpha * beta) / ((alpha + beta) ** 2 * (alpha + beta + 1))
-        uncertainty = np.std(uncertainty)
+        uncertainty = np.mean(uncertainty)
         return uncertainty
     
     def _gaussian_uncertainty(self, model_scores):
@@ -243,15 +243,15 @@ class UncertaintyConsistencyEvaluation:
     def _anom_event_score(self, y_score):
         mu = np.mean(y_score)
         uncertainty = self.estimate_uncertainty(y_score, self.method)
-        consistancy = np.exp(-uncertainty)
-        score = max((mu - 0.5),0) / consistancy
+        consistency = np.exp(-uncertainty)
+        score = max((mu - self.confidence_level),0) * consistency
         return score
     
     def _normal_event_score(self, y_score):
         mu = np.mean(y_score)
         uncertainty = self.estimate_uncertainty(y_score, self.method)
-        consistancy = np.exp(-uncertainty)
-        score = max((0.5 - mu),0) / consistancy
+        consistency = np.exp(-uncertainty)
+        score = max((0.5 - self.confidence_level),0) * consistency
         return score
     
     def _event_score(self, anom_uncertainty,normal_uncertainty):
@@ -287,7 +287,7 @@ class UncertaintyConsistencyEvaluation:
         anom_events = convert_vector_to_events(y_true)
         normal_events = convert_vector_to_events(1 - y_true)
         
-        y_scores = (y_scores - min(y_scores)) / (max(y_scores) - min(y_scores))
+        y_scores = (y_scores - min(y_scores)) / (max(y_scores) - min(y_scores) + 1e-8)
         anom_uncertainty = []
         normal_uncertainty = []
         for st, ed in anom_events:
@@ -375,7 +375,7 @@ class basic_metricor():
         return F1_Per_K, Pre, Rec
     
     def metric_UCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30):
-        uce = UncertaintyConsistencyEvaluation(method, n_samples, confidence_level)
+        uce = ConfidenceConsistencyEvaluation(method, n_samples, confidence_level)
         score = uce.compute_uncertainty_consistency_score(labels, scores, method)
         return score
 

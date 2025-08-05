@@ -1,1 +1,1 @@
-# UCE
+# CCS: Confidence-Consistency Evaluation for Time Series Anomaly Detection
