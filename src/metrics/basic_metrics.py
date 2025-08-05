@@ -125,7 +125,7 @@ def convert_vector_to_events(vector = [0, 1, 1, 0, 0, 1, 0]):
 
 
 class ConfidenceConsistencyEvaluation:
-    # or name "ConfidenceConsistencyAnomalyMetric"
+    # or name "UncertaintyAwareConfidenceConsistencyAnomalyMetric"
     """
     基于不确定度的异常检测评估指标
     
