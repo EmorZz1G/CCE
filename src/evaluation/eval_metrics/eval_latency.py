@@ -46,7 +46,6 @@ def timer(case_name, model_name, case_seed, score_seed, metric_name):
     # df.to_csv(os.path.join(log_pth, 'latency_log.csv'), index=False, mode='w', header=True)
     df.to_csv(os.path.join(log_pth, args_config.log_filename ), index=False, mode='a', header=True)
 
-    
 
 model_list = [
     {'typs': 0, 'name': 'Random', 'prob': 0.0},
