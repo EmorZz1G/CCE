@@ -383,9 +383,9 @@ class basic_metricor():
         F1_Per_K = PointF1PA1
         return F1_Per_K, Pre, Rec
     
-    def metric_UCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30):
-        uce = ConfidenceConsistencyEvaluation(method, n_samples, confidence_level)
-        score = uce.compute_confidence_consistency_score(labels, scores, method)
+    def metric_CCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30):
+        uce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples)
+        score = uce.compute_confidence_consistency_score(labels, scores)
         return score
 
     def metric_PA_percentile_K(self, labels, score, preds=None, num_K=100):

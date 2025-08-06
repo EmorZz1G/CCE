@@ -1,4 +1,4 @@
-from typing_extensions import deprecated
+from deprecated import deprecated
 import numpy as np
 import random
 
@@ -18,8 +18,12 @@ def generate_continuous_segments(num_points, num_segments, max_length, min_lengt
 创建不同类型的测试模型
 """
 # short for AccQ
-def accuracy_q_model(labels, q=0.1):
+def accuracy_q_model(labels, q=0.1, init_seed=42):
     """准确率为q的模型，正常与异常的检测概率为prob"""
+
+    np.random.seed(init_seed)
+    random.seed(init_seed)
+
     # the model has a probability of prob to predict an anomaly
     num_points = len(labels)
     prob = q
@@ -43,7 +47,9 @@ def accuracy_q_model(labels, q=0.1):
     return anomaly_scores
 
 # short for LowDisAccQ
-def low_discrimination_accuracy_q_model(labels, q=0.1):
+def low_discrimination_accuracy_q_model(labels, q=0.1, init_seed=42):
+    np.random.seed(init_seed)
+    random.seed(init_seed)
     # the model has a probability of prob to predict an anomaly
     num_points = len(labels)
     prob = q
@@ -67,7 +73,9 @@ def low_discrimination_accuracy_q_model(labels, q=0.1):
     return anomaly_scores
 
 # short for PreQ-NegP
-def precision_q_nagative_alert_p_model(labels, q=0.8, p=0.05):
+def precision_q_nagative_alert_p_model(labels, q=0.8, p=0.05, init_seed=42):
+    np.random.seed(init_seed)
+    random.seed(init_seed)
     scores = np.random.uniform(0, 0.1, len(labels))
     anomaly_indices = np.where(labels == 1)[0]
     precision_q = q
@@ -83,22 +91,19 @@ def precision_q_nagative_alert_p_model(labels, q=0.8, p=0.05):
     return scores
 
 # short for XXX-R
-def noise_robust_test(labels, base_model_func, noise_std=0.1):
+def noise_robust_test(labels, base_model_func, noise_std=0.1, init_seed=42):
+    np.random.seed(init_seed)
+    random.seed(init_seed)
     """测试模型对噪声的鲁棒性"""
     base_scores = base_model_func(labels)
     noise = np.random.normal(0, noise_std, len(base_scores))
     noisy_scores = base_scores + noise
     return np.clip(noisy_scores, 0, 1)
 
-default_model_config = {
-    'name': 'AccQ',
-    'q': 0.1,
-}
-
 # import partial
 from functools import partial
 
-def create_model_scores(model_config, init_seed=42):
+def create_model_scores(model_config):
     """
     model_config: dict, e.g.,
         {
@@ -137,9 +142,6 @@ def create_model_scores(model_config, init_seed=42):
         'func': <function accuracy_q_model at 0x7f8c8c8c8c80>
     }
     """
-    np.random.seed(init_seed)
-    random.seed(init_seed)
-    
     if model_config['name'] == 'AccQ':
         q = model_config.get('q', None)
         if q is None:
@@ -161,14 +163,14 @@ def create_model_scores(model_config, init_seed=42):
         model_func = partial(precision_q_nagative_alert_p_model, q=q, p=p)
         config = {'name': 'PreQ-NegP', 'q': q, 'p': p, 'func': model_func}
     elif '-R' in model_config['name']:
-        base_name = model_config['name'].replace('-Robust', '')
+        base_name = model_config['name'].replace('-R', '')
         base_config = model_config.copy()
         base_config['name'] = base_name
         noise_std = model_config.get('noise_std', None)
         if noise_std is None:
             raise ValueError("Robust model requires parameter 'noise_std'.")
         try:
-            results = create_model_scores(base_config, init_seed=init_seed)
+            results = create_model_scores(base_config)
             base_model_func = results['func']
         except ValueError as e:
             raise e
@@ -183,40 +185,96 @@ def create_model_scores(model_config, init_seed=42):
     
     return config
 
-model_config_lists = []
-robust_model_config_lists = []
-def add_model_config(robust=0):
-    global model_config_lists
-    # AccQ类型
-    # q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    for q in q_list:
-        config = {'name': 'AccQ', 'q': q}
-        if robust>0:
-            config['name'] = 'AccQ-R'
-            config['noise_std'] = robust
-        model_config_lists.append(create_model_scores(config))
-    # LowDisAccQ类型
-    q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    for q in q_list:
-        config = {'name': 'LowDisAccQ', 'q': q}
-        if robust>0:
-            config['name'] = 'LowDisAccQ-R'
-            config['noise_std'] = robust
-        model_config_lists.append(create_model_scores(config))
-    # PreQ-NegP类型
-    q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    p_list = [0.01, 0.05, 0.1, 0.3]
-    for q in q_list:
-        for p in p_list:
-            config = {'name': 'PreQ-NegP', 'q': q, 'p': p}
+class ModelConfigUtils:
+    def __init__(self) -> None:
+        self.model_config_lists = []
+        self.robust_model_config_lists = []
+        self.init_model_config_lists()
+
+    def get_model_list_by_name(self, model_name):
+        """根据模型名称获取模型配置列表"""
+        if model_name == 'AccQ':
+            return self.get_AccQ_list()
+        elif model_name == 'LowDisAccQ':
+            return self.get_LowDisAccQ_list()
+        elif model_name == 'PreQ-NegP':
+            return self.get_PreQ_NegP_list()
+        elif model_name == 'AccQ-R':
+            return self.get_AccQ_R_list()
+        elif model_name == 'LowDisAccQ-R':
+            return self.get_LowDisAccQ_R_list()
+        elif model_name == 'PreQ-NegP-R':
+            return self.get_PreQ_NegP_R_list()
+        else:
+            raise ValueError(f"Unknown model name: {model_name}, available models are: 'AccQ', 'LowDisAccQ', 'PreQ-NegP', and their robust versions with '-R' suffix.")
+        
+    def get_all_model_wo_robust_list(self):
+        """获取所有非Robust模型配置列表"""
+        return self.model_config_lists
+    
+    def get_all_model_w_robust_list(self):
+        """获取所有Robust模型配置列表"""
+        return self.robust_model_config_lists
+
+    def get_AccQ_list(self):
+        """获取AccQ模型配置列表"""
+        return [config for config in self.model_config_lists if config['name'] == 'AccQ']
+
+    def get_LowDisAccQ_list(self):
+        """获取LowDisAccQ模型配置列表"""
+        return [config for config in self.model_config_lists if config['name'] == 'LowDisAccQ']
+    
+    def get_PreQ_NegP_list(self):
+        """获取PreQ-NegP模型配置列表"""
+        return [config for config in self.model_config_lists if config['name'] == 'PreQ-NegP']
+    
+    def get_AccQ_R_list(self):
+        """获取AccQ-R模型配置列表"""
+        return [config for config in self.robust_model_config_lists if config['name'] == 'AccQ-R']
+    
+    def get_LowDisAccQ_R_list(self):
+        """获取LowDisAccQ-R模型配置列表"""
+        return [config for config in self.robust_model_config_lists if config['name'] == 'LowDisAccQ-R']
+    
+    def get_PreQ_NegP_R_list(self):
+        """获取PreQ-NegP-R模型配置列表"""
+        return [config for config in self.robust_model_config_lists if config['name'] == 'PreQ-NegP-R']
+
+    def init_model_config_lists(self):
+        """初始化模型配置列表"""
+        self.model_config_lists = self.add_model_config()
+        self.robust_model_config_lists = self.add_model_config(robust=0.05) + self.add_model_config(robust=0.1)
+        return self.model_config_lists, self.robust_model_config_lists
+    
+    def add_model_config(self, robust=0):
+        model_config_lists = []
+        # AccQ类型
+        q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        for q in q_list:
+            config = {'name': 'AccQ', 'q': q}
             if robust>0:
-                config['name'] = 'PreQ-NegP-R'
+                config['name'] = 'AccQ-R'
                 config['noise_std'] = robust
             model_config_lists.append(create_model_scores(config))
-add_model_config()
-add_model_config(robust=0.05)
-add_model_config(robust=0.1)
+        # LowDisAccQ类型
+        q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        for q in q_list:
+            config = {'name': 'LowDisAccQ', 'q': q}
+            if robust>0:
+                config['name'] = 'LowDisAccQ-R'
+                config['noise_std'] = robust
+            model_config_lists.append(create_model_scores(config))
+        # PreQ-NegP类型
+        q_list = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        p_list = [0.01, 0.05, 0.1, 0.3]
+        for q in q_list:
+            for p in p_list:
+                config = {'name': 'PreQ-NegP', 'q': q, 'p': p}
+                if robust>0:
+                    config['name'] = 'PreQ-NegP-R'
+                    config['noise_std'] = robust
+                model_config_lists.append(create_model_scores(config))
+        return model_config_lists
 
 
 @deprecated
@@ -298,6 +356,18 @@ file_pth = os.path.dirname(os.path.abspath(__file__))
 file_pth = upd(upd(file_pth))
 proj_pth = upd(file_pth)
 data_pth = os.path.join(proj_pth, 'datasets')
+
+# 读取项目路径下的global配置文件
+import os
+glo_config = os.path.join(proj_pth, 'global_config.yaml')
+import yaml
+with open(glo_config, 'r') as f:
+    global_config = yaml.safe_load(f)
+    datasets_abs_path = global_config.get('datasets_abs_path', None)
+    if datasets_abs_path is not None:
+        data_pth = datasets_abs_path
+        print(f"Using datasets path from global config: {data_pth}")
+
 import sys
 sys.path.append(proj_pth)
 
@@ -342,7 +412,10 @@ real_world_configs = [
 
 REAL_WORLD_CASE_NUM = len(real_world_configs)
 
+# 我需要lru
+from functools import lru_cache
 
+@lru_cache(maxsize=20)
 def generate_real_world_dataset(case_idx=0, return_data=True):
     def get_config(case_idx):
         if not isinstance(case_idx, int):
@@ -350,7 +423,6 @@ def generate_real_world_dataset(case_idx=0, return_data=True):
         if case_idx < 0 or case_idx >= REAL_WORLD_CASE_NUM:
             raise ValueError(f"Invalid case index, case_idx={case_idx}. It should be between 0 and {REAL_WORLD_CASE_NUM - 1}.")
         return real_world_configs[case_idx]
-
     
     config = get_config(case_idx)
     # Here you would implement the logic to generate the real-world dataset based on the config

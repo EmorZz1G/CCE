@@ -68,6 +68,7 @@ class PSMSegLoader(GetDataset):
         self.train = data
         self.val = self.test
         self.test_labels = pd.read_csv(data_path + '/test_label.csv').values[:, 1:]
+        self.test_labels = self.test_labels.reshape(-1)
 
         print("train:", self.train.shape)
         print("test:", self.test.shape)
