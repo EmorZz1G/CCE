@@ -21,7 +21,7 @@ log_data = []
 import argparse
 
 args = argparse.ArgumentParser()
-args.add_argument('--log_filename', '-L', type=str, default='cce_log.csv', help='The filename for the latency log.', required=False)
+args.add_argument('--log_filename', '-L', type=str, default='AccQ_log.csv', help='The filename for the latency log.', required=False)
 args.add_argument('--log_append', '-A', action='store_true', help='Whether to append to the log file instead of overwriting it.', required=False)
 args.add_argument('--model_type', '-M', type=str, default='AccQ', choices=['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R'], help='The type of model to evaluate.', required=False)
 args_config = args.parse_args()
@@ -67,11 +67,9 @@ def timer(case_name, model_name, case_seed, score_seed, model_config, metric_nam
 
 model_utils = ModelConfigUtils()
 
-model_list = model_utils.get_AccQ_list()
+model_list = model_utils.get_model_list_by_name(args_config.model_type)
 
 print(f"Model list: {model_list}")
-
-# CASE_NUM = 1
 
 def eval_latency(cnt=1):
     case_seed = 42
@@ -91,9 +89,9 @@ def eval_latency(cnt=1):
                 # metricor.cal_unbiased_aff_prec_bias(labels)
                 pred = metricor.get_pred(score)
 
-                with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='F1') as data_item: 
-                    F1 = metricor.metric_PointF1(labels, score, pred)
-                    data_item['val'] = F1
+                # with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='F1') as data_item: 
+                #     F1 = metricor.metric_PointF1(labels, score, pred)
+                #     data_item['val'] = F1
                 # with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='F1-PA') as data_item: 
                 #     F1PA, pre, rec = metricor.metric_PointF1PA(labels, score, pred)
                 #     data_item['val'] = F1PA
@@ -214,6 +212,7 @@ def eval_latency_real_world_case(cnt=5):
 
 
 if __name__ == "__main__":
+    print("CASE_NUM:", CASE_NUM, "REAL_WORLD_CASE_NUM:", REAL_WORLD_CASE_NUM)
     # eval_latency(cnt=3)
-    eval_latency_real_world_case(cnt=3)
+    # eval_latency_real_world_case(cnt=3)
     print("Latency evaluation completed.")

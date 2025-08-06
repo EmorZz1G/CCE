@@ -190,6 +190,7 @@ class ModelConfigUtils:
         self.model_config_lists = []
         self.robust_model_config_lists = []
         self.init_model_config_lists()
+        print(f"Initialized {len(self.model_config_lists)} non-robust models and {len(self.robust_model_config_lists)} robust models.")
 
     def get_model_list_by_name(self, model_name):
         """根据模型名称获取模型配置列表"""
