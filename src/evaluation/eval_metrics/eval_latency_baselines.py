@@ -21,7 +21,8 @@ log_data = []
 import argparse
 
 
-default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based-F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC']
+default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based-F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC',
+                         'CCE2']
 
 args = argparse.ArgumentParser()
 args.add_argument('--log_filename', '-L', type=str, default='AccQ_log.csv', help='The filename for the latency log.', required=True)
@@ -60,7 +61,7 @@ def timer(case_name, model_name, case_seed, score_seed, model_config, metric_nam
     yield data_item
     end_time = time.perf_counter()
     latency = (end_time - start_time) * 1000  # 转换为毫秒
-    print(f"{case_name}: {model_name} {metric_name} latency: {latency:.2f} ms")
+    print(f"{case_name}: {model_name} {metric_name} latency: {latency:.2f} ms val: {data_item.get('val', 'N/A')}")
     data_item['latency'] = latency
     log_data.append(data_item)
     # 将日志数据写入csv
@@ -96,6 +97,7 @@ def eval_latency(cnt=1):
                 # Initialize the metricor
                 metricor = basic_metricor(case_name, labels, log_pth)
                 # metricor.cal_unbiased_aff_prec_bias(labels)
+
                 pred = metricor.get_pred(score)
 
                 if baseline == 'F1':
@@ -124,11 +126,28 @@ def eval_latency(cnt=1):
                         data_item['val'] = TaF1
                 elif baseline == 'eTaPR':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='eTaPR') as data_item:
-                        eTaF1, eTaP, eTaR = metricor.metric_eTaPR_F1(labels, score, pred)
+                        if '-R' in model_name:
+                            pred = metricor.get_pred(score, 0.75)
+                            if sum(pred)==0:
+                                pred = metricor.get_pred(score, 0.65)
+                            if sum(pred)==0:
+                                pred = metricor.get_pred(score, 0.55)
+                            eTaF1, eTaP, eTaR = metricor.metric_eTaPR_F1(labels, score, pred)
+                        else:
+                            eTaF1, eTaP, eTaR = metricor.metric_eTaPR_F1(labels, score, pred)
+              
                         data_item['val'] = eTaF1
                 elif baseline == 'Aff-F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='Aff-F1') as data_item:
+                        if '-R' in model_name:
+                            pred = metricor.get_pred(score, 0.75)
                         Aff_F1, Aff_pre, Aff_rec = metricor.metric_Affiliation(labels, score, pred)
+                        if np.isnan(Aff_F1):
+                            pred = metricor.get_pred(score, 0.65)
+                            Aff_F1, Aff_pre, Aff_rec = metricor.metric_Affiliation(labels, score, pred)
+                        if np.isnan(Aff_F1):
+                            pred = metricor.get_pred(score, 0.55)
+                            Aff_F1, Aff_pre, Aff_rec = metricor.metric_Affiliation(labels, score, pred)
                         data_item['val'] = Aff_F1
                 elif baseline == 'NAff-F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='NAff-F1') as data_item:
@@ -136,7 +155,15 @@ def eval_latency(cnt=1):
                         data_item['val'] = NAff_F1
                 elif baseline == 'UAff-F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='UAff-F1') as data_item:
+                        if '-R' in model_name:
+                            pred = metricor.get_pred(score, 0.75)
                         UAff_F1, UAff_pre, UAff_rec = metricor.metric_U_Affiliation_f1_pre_rec(labels, score, pred)
+                        if np.isnan(UAff_F1):
+                            pred = metricor.get_pred(score, 0.65)
+                            UAff_F1, UAff_pre, UAff_rec = metricor.metric_U_Affiliation_f1_pre_rec(labels, score, pred)
+                        if np.isnan(UAff_F1):
+                            pred = metricor.get_pred(score, 0.55)
+                            UAff_F1, UAff_pre, UAff_rec = metricor.metric_U_Affiliation_f1_pre_rec(labels, score, pred)
                         data_item['val'] = UAff_F1
                 elif baseline == 'PATE':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='PATE') as data_item:
@@ -158,10 +185,11 @@ def eval_latency(cnt=1):
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='VUS-PR') as data_item:
                         VUS_PR = metricor.metric_VUS_PR(labels, score, thre=100)
                         data_item['val'] = VUS_ROC
-                elif baseline == 'CCE':
-                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE') as data_item:
+                elif baseline == 'CCE2':
+                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE2') as data_item:
                         CCE = metricor.metric_CCE(labels, score)
                         data_item['val'] = CCE
+                
         print(f"Finished evaluating case: {case_name}")
 
 def eval_latency_real_world_case(cnt=5):
@@ -214,6 +242,7 @@ def eval_latency_real_world_case(cnt=5):
                 elif baseline == 'Aff-F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='Aff-F1') as data_item:
                         Aff_F1, Aff_pre, Aff_rec = metricor.metric_Affiliation(labels, score, pred)
+                        print(Aff_F1, Aff_pre, Aff_rec)
                         data_item['val'] = Aff_F1
                 elif baseline == 'NAff-F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='NAff-F1') as data_item:
@@ -243,8 +272,8 @@ def eval_latency_real_world_case(cnt=5):
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='VUS-PR') as data_item:
                         VUS_PR = metricor.metric_VUS_PR(labels, score, thre=100)
                         data_item['val'] = VUS_ROC
-                elif baseline == 'CCE':
-                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE') as data_item:
+                elif baseline == 'CCE2':
+                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE2') as data_item:
                         CCE = metricor.metric_CCE(labels, score)
                         data_item['val'] = CCE
         

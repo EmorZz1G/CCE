@@ -100,7 +100,7 @@ class MyAffBiasCache:
     
 
 
-def convert_vector_to_events(vector = [0, 1, 1, 0, 0, 1, 0]):
+def convert_vector_to_events(vector):
     """
     Convert a binary vector (indicating 1 for the anomalous instances)
     to a list of events. The events are considered as durations,
@@ -187,8 +187,8 @@ class ConfidenceConsistencyEvaluation:
         
         bootstrap_scores = np.array(bootstrap_scores)
         
-        # 计算每个位置的标准差作为不确定度
-        uncertainty = np.std(bootstrap_scores, axis=0)
+        # 计算每个位置的方差作为不确定度
+        uncertainty = np.var(bootstrap_scores, axis=0)
         
         return uncertainty
     
@@ -207,7 +207,7 @@ class ConfidenceConsistencyEvaluation:
             ensemble_scores.append(ensemble_score)
         
         ensemble_scores = np.array(ensemble_scores)
-        uncertainty = np.std(ensemble_scores, axis=0)
+        uncertainty = np.var(ensemble_scores, axis=0)
         
         return uncertainty
     
@@ -229,7 +229,7 @@ class ConfidenceConsistencyEvaluation:
         """
         使用高斯分布估计不确定度
         """
-        uncertainty = np.std(model_scores)
+        uncertainty = np.var(model_scores)
         return uncertainty
     
     def metric_score(self, y_true, y_scores):
@@ -266,7 +266,21 @@ class ConfidenceConsistencyEvaluation:
     def _event_score(self, anom_uncertainty,normal_uncertainty):
         anom_score = np.mean(anom_uncertainty)
         norm_score = np.mean(normal_uncertainty)
-        event_score = 2 * anom_score * norm_score / (anom_score + norm_score + 1e-8)
+        if self.positive_constraint:
+            event_score = 2 * anom_score * norm_score / (anom_score + norm_score + 1e-8)
+        else:
+            anom_score_ = abs(anom_score)
+            norm_score_ = abs(norm_score)
+            event_score = 2 * anom_score_ * norm_score_ / (anom_score_ + norm_score_ + 1e-8)
+            if anom_score <0 or norm_score < 0:
+                event_score *= -1
+
+        return event_score
+    
+    def _event_score_v2(self, anom_uncertainty,normal_uncertainty, weight=0.5):
+        anom_score = np.mean(anom_uncertainty)
+        norm_score = np.mean(normal_uncertainty)
+        event_score = anom_score * weight + norm_score * (1 - weight)
         return event_score
     
     def _global_score(self, y_true, y_scores):
@@ -274,7 +288,22 @@ class ConfidenceConsistencyEvaluation:
         norm_list = y_scores[y_true==0]
         glo_anom_score = self._anom_event_score(anom_list)
         glo_norm_score = self._normal_event_score(norm_list)
-        glo_score = 2 * glo_anom_score * glo_norm_score / (glo_anom_score + glo_norm_score + 1e-8)
+        if self.positive_constraint:
+            glo_score = 2 * glo_anom_score * glo_norm_score / (glo_anom_score + glo_norm_score + 1e-8)
+        else:
+            glo_anom_score_ = abs(glo_anom_score)
+            glo_norm_score_ = abs(glo_norm_score)
+            glo_score = 2 * glo_anom_score_ * glo_norm_score_ / (glo_anom_score_ + glo_norm_score_ + 1e-8)
+            if glo_anom_score <0 or glo_norm_score < 0:
+                glo_score *= -1
+        return glo_score
+
+    def _global_score_v2(self, y_true, y_scores, weight=0.5):
+        anom_list = y_scores[y_true==1]
+        norm_list = y_scores[y_true==0]
+        glo_anom_score = self._anom_event_score(anom_list)
+        glo_norm_score = self._normal_event_score(norm_list)
+        glo_score = glo_anom_score * weight + glo_norm_score * (1 - weight)
         return glo_score
     
     def compute_confidence_consistency_score(self, y_true, y_scores):
@@ -303,9 +332,41 @@ class ConfidenceConsistencyEvaluation:
             anom_uncertainty.append(self._anom_event_score(y_scores[st:ed]))
         for st, ed in normal_events:
             normal_uncertainty.append(self._normal_event_score(y_scores[st:ed]))
-        
         score_event =  self._event_score(anom_uncertainty,normal_uncertainty)
         score_global = self._global_score(y_true,y_scores)
+        score = score_event + score_global
+        return score
+    
+    # 更鲁棒的版本
+    def compute_confidence_consistency_score_v2(self, y_true, y_scores, weight=0.5):
+        """
+        计算基于不确定度的异常检测评估分数
+        
+        Args:
+            y_true: 真实标签
+            y_scores: 模型预测分数
+            method: 不确定度估计方法
+            
+        Returns:
+            UCE分数, 0-1, 越大保持一致性越好, 结果越可信
+        """
+        # ytrue只有0或者1
+        y_true = y_true.astype(int)
+        
+        # 获取异常区间 
+        anom_events = convert_vector_to_events(y_true)
+        normal_events = convert_vector_to_events(1 - y_true)
+        
+        y_scores = (y_scores - min(y_scores)) / (max(y_scores) - min(y_scores) + 1e-8)
+        anom_uncertainty = []
+        normal_uncertainty = []
+        for st, ed in anom_events:
+            anom_uncertainty.append(self._anom_event_score(y_scores[st:ed]))
+        for st, ed in normal_events:
+            normal_uncertainty.append(self._normal_event_score(y_scores[st:ed]))
+
+        score_event =  self._event_score_v2(anom_uncertainty,normal_uncertainty,weight)
+        score_global = self._global_score_v2(y_true,y_scores,weight)
         score = score_event + score_global
         return score
     
@@ -384,8 +445,9 @@ class basic_metricor():
         return F1_Per_K, Pre, Rec
     
     def metric_CCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30):
-        uce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples)
-        score = uce.compute_confidence_consistency_score(labels, scores)
+        cce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples)
+        # score = uce.compute_confidence_consistency_score(labels, scores)
+        score = cce.compute_confidence_consistency_score_v2(labels, scores)
         return score
 
     def metric_PA_percentile_K(self, labels, score, preds=None, num_K=100):
@@ -803,8 +865,8 @@ class basic_metricor():
             for threshold in thresholds:
                 preds = (score > threshold).astype(int)
 
-                events_pred = convert_vector_to_events(preds)
-                events_gt = convert_vector_to_events(label)
+                events_pred = self.range_convers_new(preds)
+                events_gt = self.range_convers_new(label)
                 Trange = (0, len(preds))
                 affiliation_metrics = pr_from_events(events_pred, events_gt, Trange)
                 Affiliation_Precision = affiliation_metrics['Affiliation_Precision']
@@ -826,8 +888,8 @@ class basic_metricor():
 
 
         else:
-            events_pred = convert_vector_to_events(preds)
-            events_gt = convert_vector_to_events(label)
+            events_pred = self.range_convers_new(preds)
+            events_gt = self.range_convers_new(label)
             Trange = (0, len(preds))
             affiliation_metrics = pr_from_events(events_pred, events_gt, Trange)
             Affiliation_Precision = affiliation_metrics['Affiliation_Precision']

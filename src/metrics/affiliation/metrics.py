@@ -62,6 +62,7 @@ def pr_from_events(events_pred, events_gt, Trange):
     :return: dictionary with precision, recall, and the individual metrics
     """
     # testing the inputs
+
     test_events(events_pred)
     test_events(events_gt)
     
