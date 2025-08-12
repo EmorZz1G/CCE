@@ -191,7 +191,7 @@ def ana_metrics_ranking():
     model_type_list = ['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R']
     model_type_list = ['AccQ']
     # model_type_list = ['LowDisAccQ']
-    # model_type_list = ['PreQ-NegP']
+    model_type_list = ['PreQ-NegP']
     for b in default_baseline_list:
         for m in model_type_list:
             print(b)

@@ -247,10 +247,11 @@ if __name__ == "__main__":
     metric = 'Reduced-F1'
     metric = 'F1'
     metric = 'eTaPR'
+    metric = 'CCE2'
 
     new_pths = [p.replace('CCE',metric) for p in pths]
 
-    new_pths = pths
+    # new_pths = pths
 
     print(new_pths[0])
 
