@@ -1,1 +1,1 @@
-# CCS: Confidence-Consistency Evaluation for Time Series Anomaly Detection
+# CCE: Confidence-Consistency Evaluation for Time Series Anomaly Detection

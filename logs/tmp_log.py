@@ -242,12 +242,12 @@ if __name__ == "__main__":
     
     metric = 'VUS-ROC'
     metric = 'UAff-F1'
-    metric = 'F1-PA'
-    metric = 'R-based-F1'
-    metric = 'Reduced-F1'
-    metric = 'F1'
-    metric = 'eTaPR'
-    metric = 'CCE2'
+    # metric = 'F1-PA'
+    # metric = 'R-based-F1'
+    # metric = 'Reduced-F1'
+    # metric = 'F1'
+    # metric = 'eTaPR'
+    # metric = 'CCE2'
 
     new_pths = [p.replace('CCE',metric) for p in pths]
 
