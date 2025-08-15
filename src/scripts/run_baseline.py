@@ -1,4 +1,4 @@
-# default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based-F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC']
+# default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC']
 # model_type_list = ['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R']
 
 # default_baseline_list = ['CCE']
@@ -28,7 +28,7 @@ def run_evals(default_baseline_list, model_type_list):
 
 # run_evals(default_baseline_list, model_type_list)
 
-# default_baseline_list = ['F1-PA', 'Reduced-F1', 'R-based-F1', 'AUC-ROC']
+# default_baseline_list = ['F1-PA', 'Reduced-F1', 'R-based F1', 'AUC-ROC']
 # model_type_list = ['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R']
 # run_evals(default_baseline_list, model_type_list)
 
@@ -37,11 +37,11 @@ def run_evals(default_baseline_list, model_type_list):
 # run_evals(default_baseline_list, model_type_list)
             
 
-default_baseline_list = ['eTaPR','UAff-F1']
-model_type_list = ['AccQ-R']
-run_evals(default_baseline_list, model_type_list)
-
-
-# default_baseline_list = ['CCE2']
-# model_type_list = ['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R']
+# default_baseline_list = ['eTaPR','UAff-F1']
+# model_type_list = ['AccQ-R']
 # run_evals(default_baseline_list, model_type_list)
+
+
+default_baseline_list = ['PATE']
+model_type_list = ['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R']
+run_evals(default_baseline_list, model_type_list)

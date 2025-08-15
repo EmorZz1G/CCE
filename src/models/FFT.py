@@ -5,8 +5,8 @@ Original source: [https://github.com/TimeEval/TimeEval-algorithms]
 
 import numpy as np
 from dataclasses import dataclass
-from TSB_AD.models.base import BaseDetector
-from TSB_AD.utils.utility import zscore
+from .models.base import BaseDetector
+from .utils.utility import zscore
 
 class FFT(BaseDetector):
 

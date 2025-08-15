@@ -21,8 +21,8 @@ log_data = []
 import argparse
 
 
-default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based-F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC',
-                         'CCE2']
+default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC',
+                         'PATE']
 
 args = argparse.ArgumentParser()
 args.add_argument('--log_filename', '-L', type=str, default='AccQ_log.csv', help='The filename for the latency log.', required=True)
@@ -116,7 +116,7 @@ def eval_latency(cnt=1):
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='PA%K') as data_item:
                         F1_Per_K, Prec_Per_K, Rec_Per_K = metricor.metric_PA_percentile_K(labels, score, pred)
                         data_item['val'] = F1_Per_K
-                elif baseline == 'R-based-F1':
+                elif baseline == 'R-based F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='R-based F1') as data_item:
                         RbasedF1 = metricor.metric_RF1(labels, score, pred)
                         data_item['val'] = RbasedF1
@@ -185,8 +185,8 @@ def eval_latency(cnt=1):
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='VUS-PR') as data_item:
                         VUS_PR = metricor.metric_VUS_PR(labels, score, thre=100)
                         data_item['val'] = VUS_ROC
-                elif baseline == 'CCE2':
-                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE2') as data_item:
+                elif baseline == 'CCE':
+                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE') as data_item:
                         CCE = metricor.metric_CCE(labels, score)
                         data_item['val'] = CCE
                 
@@ -227,7 +227,7 @@ def eval_latency_real_world_case(cnt=5):
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='PA%K') as data_item:
                         F1_Per_K, Prec_Per_K, Rec_Per_K = metricor.metric_PA_percentile_K(labels, score, pred)
                         data_item['val'] = F1_Per_K
-                elif baseline == 'R-based-F1':
+                elif baseline == 'R-based F1':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='R-based F1') as data_item:
                         RbasedF1 = metricor.metric_RF1(labels, score, pred)
                         data_item['val'] = RbasedF1
@@ -254,7 +254,7 @@ def eval_latency_real_world_case(cnt=5):
                         data_item['val'] = UAff_F1
                 elif baseline == 'PATE':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='PATE') as data_item:
-                        PATE = metricor.metric_PATE(labels, score, n_jobs=100, num_desired_thresholds=100)
+                        PATE = metricor.metric_PATE(labels, score, n_jobs=50, num_desired_thresholds=100)
                         data_item['val'] = PATE
                 elif baseline == 'AUC-ROC':
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='AUC-ROC') as data_item:
@@ -272,8 +272,8 @@ def eval_latency_real_world_case(cnt=5):
                     with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='VUS-PR') as data_item:
                         VUS_PR = metricor.metric_VUS_PR(labels, score, thre=100)
                         data_item['val'] = VUS_ROC
-                elif baseline == 'CCE2':
-                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE2') as data_item:
+                elif baseline == 'CCE':
+                    with timer(case_name, model_name, case_seed_new, score_seed_new, model, metric_name='CCE') as data_item:
                         CCE = metricor.metric_CCE(labels, score)
                         data_item['val'] = CCE
         

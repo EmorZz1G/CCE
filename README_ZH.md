@@ -1,4 +1,10 @@
 
+# Quick Start
+```
+. scripts/run_baseline.sh
+. scripts/run_real_world.sh
+```
+
 ## 使用方式
 ### 如何测评新的指标？
 1. 在`CCE/src/metrics/basic_metrics.py`中引入指标，并增加新的函数，通常命名为`metric_XXX()`，例如`metric_F1(), metric_AUCROC()`。
@@ -17,13 +23,19 @@
 
 ## 支持的测评
 1. 指标计算时延。
-2. 根据理论排名排序，计算偏序对/总排序数
+2. 根据理论排名排序。
+3. 鲁棒性评估。
+4. 区分度评估
+两种方式，分别是，1) 基于排序的和2) 基于val变化比例（需要考虑噪声的方差）。
 
 ## Updates
 1. 2025-08-05 开始项目（初始化代码，项目网站）
 
 ## TODO List
-1. 增加不同的评估SOP
+1. 增加自动化标准评估流程。
+    1. 基本思路，在PR之后，执行update_rank_benchmark.py自动运行指标的测试，并上传指标的结果。
+2. 鲁棒性评估。
+3. 区分度评估
 
 ## Acknowledgment
 1. 感谢FTSAD提供时序异常检测评估指标测试框架。我们在此基础上进行了扩展，增加了更多类型的测试。

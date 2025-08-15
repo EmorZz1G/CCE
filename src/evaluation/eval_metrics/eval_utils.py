@@ -413,7 +413,6 @@ real_world_configs = [
 
 REAL_WORLD_CASE_NUM = len(real_world_configs)
 
-# 我需要lru
 from functools import lru_cache
 
 @lru_cache(maxsize=20)

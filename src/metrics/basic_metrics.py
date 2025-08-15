@@ -5,6 +5,8 @@ import copy
 from itertools import groupby
 from operator import itemgetter
 
+METRIC_LIST = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'AUC-PR', 'PA%K', 'TaPR']
+
 try:
     from eTaPR_pkg.tapr import print_result, compute
     from eTaPR_pkg.etapr import evaluate_w_ranges
@@ -377,6 +379,54 @@ class basic_metricor():
         self.bias = bias
         self.eps = 1e-15
         self.Unbiased_Aff_prec_bias_cache = MyAffBiasCache()
+
+    def metric_by_name(self, name, labels, score, preds=None, **kwargs):
+        """
+        根据名称调用对应的指标计算函数。
+        
+        Args:
+            name: 指标名称
+            labels: 真实标签
+            score: 模型预测分数
+            preds: 可选，预测标签
+            
+        Returns:
+            指标计算结果
+        """
+        if name == 'CCE':
+            results = self.metric_CCE(labels, score, **kwargs)
+        elif name == 'F1':
+            results = self.metric_PointF1(labels, score, preds=preds)
+        elif name == 'F1-PA':
+            results = self.metric_PointF1PA(labels, score, preds=preds)
+        elif name == 'Reduced-F1':
+            results = self.metric_Reduced_F1(labels, score, preds=preds)
+        elif name == 'R-based F1':
+            results = self.metric_RF1(labels, score, preds=preds)
+        elif name == 'eTaPR':
+            results = self.metric_eTaPR_F1(labels, score, preds=preds, **kwargs)
+        elif name == 'PA%K':
+            results = self.metric_PA_percentile_K(labels, score, preds=preds, **kwargs)
+        elif name == 'TaPR':
+            results = self.metric_TaPR_F1(labels, score, preds=preds, **kwargs)
+        elif name == 'Aff-F1':
+            results = self.metric_Affiliation(labels, score, preds=preds)
+        elif name == 'UAff-F1':
+            results = self.metric_UN_Affiliation(labels, score, pred=preds)
+        elif name == 'AUC-ROC':
+            results = self.metric_ROC(labels, score)
+        elif name == 'AUC-PR':
+            results = self.metric_PR(labels, score)
+        elif name == 'VUS-ROC':
+            results = self.metric_VUS_ROC(labels, score)
+        else:
+            raise ValueError(f"Unsupported metric name: {name}")
+        
+        if isinstance(results, (tuple, list, np.ndarray)):
+            first_value = results[0]
+        else:
+            first_value = results  # 标量
+        return first_value
 
     def get_pred(self, score, quantile=0.95):
         """
