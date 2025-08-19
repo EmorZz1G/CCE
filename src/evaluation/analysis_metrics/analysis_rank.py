@@ -12,7 +12,7 @@ import pandas as pd
 import sys
 from deprecated import deprecated
 
-metric_list_ = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC']
+metric_list_ = ['CCE', 'AUC-ROC','F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'VUS-ROC']
 task_list_ = ['AccQ', 'LowDisAccQ', 'PreQ-NegP']
 import argparse
 argparser = argparse.ArgumentParser(description='Analyze ranking metrics')
@@ -394,12 +394,87 @@ def plot_rank_by_task(task_type, metric_list=None, qp_metric='spearman_q'):
     g.figure.savefig(opj(output_dir, 'plots', f'{task_type}{tmp}_rank_{qp_name}.jpg'), dpi=500)
     plt.show()
 
+def gen_rank_table(metric_list):
+    """
+    生成排名表格
+    """
+   
+    df = pd.read_csv(opj(output_dir, 'AccQ_ranking_all.csv'))
+    df2 = pd.read_csv(opj(output_dir, 'LowDisAccQ_ranking_all.csv'))
+    df3 = pd.read_csv(opj(output_dir, 'PreQ-NegP_ranking_all.csv'))
+    # noise_std,spearman_q,kendall_q,mean_deviation_q,metric_name
+    df = df.groupby('metric_name').agg({
+        'spearman_q': 'mean',
+        'kendall_q': 'mean',
+        'mean_deviation_q': 'mean'
+    }).reset_index()
+    df.rename(columns={
+        'spearman_q': 'Sp',
+        'kendall_q': 'Kd',
+        'mean_deviation_q': 'MD'
+    }, inplace=True)
+    df_new = pd.DataFrame({
+        'Metric': df['metric_name'],
+        'AccQ_Sp': df['Sp'],
+        'AccQ_Kd': df['Kd'],
+        'AccQ_MD': df['MD']
+    })
+    df2 = df2.groupby('metric_name').agg({
+        'spearman_q': 'mean',
+        'kendall_q': 'mean',
+        'mean_deviation_q': 'mean'
+    }).reset_index()
+    df2.rename(columns={
+        'spearman_q': 'Sp',
+        'kendall_q': 'Kd',
+        'mean_deviation_q': 'MD'
+    }, inplace=True)
+    df_new2 = pd.DataFrame({
+        'Metric': df2['metric_name'],
+        'LowDisAccQ_Sp': df2['Sp'],
+        'LowDisAccQ_Kd': df2['Kd'],
+        'LowDisAccQ_MD': df2['MD']
+    })
+    df3 = df3.groupby('metric_name').agg({
+        'spearman_q': 'mean',
+        'kendall_q': 'mean',
+        'mean_deviation_q': 'mean',
+        'spearman_p': 'mean',
+        'kendall_p': 'mean',
+        'mean_deviation_p': 'mean'
+    }).reset_index()
+    df_new3 = pd.DataFrame({
+        'Metric': df3['metric_name'],
+        'PreQ-NegP-Q_Sp': df3['spearman_q'],
+        'PreQ-NegP-Q_Kd': df3['kendall_q'],
+        'PreQ-NegP-Q_MD': df3['mean_deviation_q'],
+        'PreQ-NegP-P_Sp': df3['spearman_p'],
+        'PreQ-NegP-P_Kd': df3['kendall_p'],
+        'PreQ-NegP-P_MD': df3['mean_deviation_p']
+    })
+    # 合并三个DataFrame
+    df_final = pd.merge(df_new, df_new2, on='Metric', how='outer')
+    df_final = pd.merge(df_final, df_new3, on='Metric', how='outer')
+
+    # 创建排序键并排序
+    df_final["sort_key"] = df_final["Metric"].apply(lambda x: metric_list.index(x) if x in metric_list else len(metric_list))
+    df_final = df_final.sort_values("sort_key").drop(columns=["sort_key"]).reset_index(drop=True)
+    # 保存到CSV
+    if not os.path.exists(opj(output_dir, 'tables')):
+        os.makedirs(opj(output_dir, 'tables'))
+    output_pth = opj(output_dir, 'tables', 'rank_table.csv')
+    df_final.to_csv(output_pth, index=False)
+    # 三行是不同指标的Sp, Kd, MD分数
+
+
+
 if '__main__' == __name__:
     # ana_metrics_ranking(metric_list, task_list)
-
-    rank_metric_list = ['spearman', 'kendall', 'mean_deviation']
-    for rk in rank_metric_list:
-        plot_rank_by_task('AccQ', metric_list, rk+'_q')
-        plot_rank_by_task('LowDisAccQ', metric_list, rk+'_q')
-        plot_rank_by_task('PreQ-NegP', metric_list, rk+'_q')
-        plot_rank_by_task('PreQ-NegP', metric_list, rk+'_p')
+    # rank_metric_list = ['spearman', 'kendall', 'mean_deviation']
+    # for rk in rank_metric_list:
+    #     plot_rank_by_task('AccQ', metric_list, rk+'_q')
+    #     plot_rank_by_task('LowDisAccQ', metric_list, rk+'_q')
+    #     plot_rank_by_task('PreQ-NegP', metric_list, rk+'_q')
+    #     plot_rank_by_task('PreQ-NegP', metric_list, rk+'_p')
+    pass
+    gen_rank_table(metric_list)
