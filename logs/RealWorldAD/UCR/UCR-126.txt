@@ -1,0 +1,12 @@
+\begin{tabular}{lllllll}
+\toprule
+model_name & CCE & AUC-ROC & F1 & eTaPR & Aff-F1 & VUS-ROC \\
+\midrule
+LOF & -0.09 & 52.23 & 1.67 & 0.0 & 67.66 & 52.5 \\
+IForest & -14.89 & 26.06 & 0.0 & 0.0 & 72.58 & 30.33 \\
+LSTMAD & 2.71 & 44.7 & 2.17 & 1.27 & 67.44 & 60.12 \\
+USAD & -3.21 & 47.35 & 0.0 & 0.0 & 66.44 & 51.6 \\
+A.T. & -0.51 & 47.77 & 0.0 & 0.0 & 67.29 & 50.53 \\
+Random & 0.25 & 50.25 & 0.33 & 0.0 & 64.93 & 68.0 \\
+\bottomrule
+\end{tabular}

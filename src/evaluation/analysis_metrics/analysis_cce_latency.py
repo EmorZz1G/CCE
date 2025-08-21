@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def load_dataset_config(file_path1, file_path2):
+def load_dataset_config(file_path1=dataset_config1, file_path2=dataset_config2):
     """
     Load dataset configurations from two CSV files and merge them.
     

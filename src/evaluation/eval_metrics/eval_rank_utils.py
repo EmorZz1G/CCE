@@ -3,7 +3,9 @@ from itertools import combinations
 
 def spearman(expected, test):
     """计算斯皮尔曼等级相关系数"""
-    if set(expected) != set(test) or len(expected) != len(test):
+    # if set(expected) != set(test) or len(expected) != len(test):
+    #     raise ValueError("两个排序必须包含相同元素且长度一致")
+    if len(expected) != len(test):
         raise ValueError("两个排序必须包含相同元素且长度一致")
     
     n = len(expected)
@@ -21,7 +23,9 @@ def spearman(expected, test):
 
 def kendall(expected, test):
     """计算肯德尔tau系数"""
-    if set(expected) != set(test) or len(expected) != len(test):
+    # if set(expected) != set(test) or len(expected) != len(test):
+    #     raise ValueError("两个排序必须包含相同元素且长度一致")
+    if len(expected) != len(test):
         raise ValueError("两个排序必须包含相同元素且长度一致")
     
     n = len(expected)
@@ -45,7 +49,9 @@ def kendall(expected, test):
 
 def mean_deviation(expected, test):
     """计算平均排名偏差"""
-    if set(expected) != set(test) or len(expected) != len(test):
+    # if set(expected) != set(test) or len(expected) != len(test):
+    #     raise ValueError("两个排序必须包含相同元素且长度一致")
+    if len(expected) != len(test):
         raise ValueError("两个排序必须包含相同元素且长度一致")
     
     n = len(expected)
@@ -58,12 +64,97 @@ def mean_deviation(expected, test):
     total_diff = sum(abs(expected_rank[item] - test_rank[item]) for item in expected)
     return total_diff / n
 
+
+
+def spearman_v2(expected_rank, test_rank):
+    """计算斯皮尔曼等级相关系数"""
+    # if set(expected) != set(test) or len(expected) != len(test):
+    #     raise ValueError("两个排序必须包含相同元素且长度一致")
+    if len(expected_rank) != len(test_rank):
+        raise ValueError("两个排序必须包含相同元素且长度一致")
+    
+    n = len(expected_rank)
+    if n < 2:
+        return 1.0
+    
+    # 创建元素到排名的映射
+    
+    # 计算排名差的平方和
+    squared_diff = sum((expected_rank[item] - test_rank[item])**2 for item in range(len(expected_rank)))
+    
+    return 1 - (6 * squared_diff) / (n * (n**2 - 1))
+
+def kendall_v2(expected, test):
+    """计算肯德尔tau系数"""
+    # if set(expected) != set(test) or len(expected) != len(test):
+    #     raise ValueError("两个排序必须包含相同元素且长度一致")
+    if len(expected) != len(test):
+        raise ValueError("两个排序必须包含相同元素且长度一致")
+    
+    n = len(expected)
+    if n < 2:
+        return 1.0
+    
+    expected_rank = expected
+    concordant = 0
+    discordant = 0
+    
+    # 检查所有元素对的相对顺序
+    for (a,b) in combinations(list(range(n)), 2):
+        # 在测试排序中a在b前面
+        if expected_rank[a] < expected_rank[b]:
+            concordant += 1
+        else:
+            discordant += 1
+    # for (a, b) in combinations(test, 2):
+    #     # 在测试排序中a在b前面
+    #     if expected_rank[a] < expected_rank[b]:
+    #         concordant += 1
+    #     else:
+    #         discordant += 1
+    
+    total_pairs = n * (n - 1) // 2
+    return (concordant - discordant) / total_pairs
+
+def mean_deviation_v2(expected, test):
+    """计算平均排名偏差"""
+    # if set(expected) != set(test) or len(expected) != len(test):
+    #     raise ValueError("两个排序必须包含相同元素且长度一致")
+    if len(expected) != len(test):
+        raise ValueError("两个排序必须包含相同元素且长度一致")
+    
+    n = len(expected)
+    if n == 0:
+        return 0.0
+    
+    # expected_rank = {item: i+1 for i, item in enumerate(expected)}
+    # test_rank = {item: i+1 for i, item in enumerate(test)}
+    expected_rank = expected
+    test_rank = test
+    
+    total_diff = sum(abs(expected_rank[item] - test_rank[item]) for item in range(len(expected)))
+    return total_diff / n
+
 def get_ranking_score(expected, ranking):
     """获取单个排序的评分"""
     # 计算各项指标
     s = spearman(expected, ranking)
     k = kendall(expected, ranking)
     m = mean_deviation(expected, ranking)
+    
+    return {
+        "spearman": s,
+        "kendall": k,
+        "mean_deviation": m
+    }
+
+
+def get_ranking_score_v2(expected, ranking):
+    """获取单个排序的评分"""
+    # 计算各项指标
+    s = spearman_v2(expected, ranking)
+    k = kendall_v2(expected, ranking)
+    m = mean_deviation_v2(expected, ranking)
     
     return {
         "spearman": s,

@@ -7,7 +7,7 @@ except:
     from .slidingWindows import find_length_rank
 
 Unsupervise_AD_Pool = ['FFT', 'SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
-                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
+                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS','Random']
 Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
                         'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2', 'DualTF']
 
@@ -35,12 +35,19 @@ def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
         error_message = f"Model function '{function_name}' is not defined."
         print(error_message)
         return error_message
+    
+def run_Random(data):
+    """A dummy function that returns a random score for each data point."""
+    # Generate a random score between 0 and 1 for each data point
+    score = np.random.rand(data.shape[0])
+    return score.ravel()
 
 def run_FFT(data, ifft_parameters=5, local_neighbor_window=21, local_outlier_threshold=0.6, max_region_size=50, max_sign_change_distance=10):
     from ..models.FFT import FFT
     clf = FFT(ifft_parameters=ifft_parameters, local_neighbor_window=local_neighbor_window, local_outlier_threshold=local_outlier_threshold, max_region_size=max_region_size, max_sign_change_distance=max_sign_change_distance)
     clf.fit(data)  
-    score = clf.decision_scores_ 
+    score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_Sub_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
@@ -132,13 +139,15 @@ def run_Sub_PCA(data, periodicity=1, n_components=None, n_jobs=1):
     clf = PCA(slidingWindow = slidingWindow, n_components=n_components)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
-def run_PCA(data, slidingWindow=100, n_components=None, n_jobs=1):
+def run_PCA(data, slidingWindow=30, n_components=None, n_jobs=1):
     from ..models.PCA import PCA
     clf = PCA(slidingWindow = slidingWindow, n_components=n_components)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_NORMA(data, periodicity=1, clustering='hierarchical', n_jobs=1):
@@ -166,6 +175,7 @@ def run_HBOS(data, slidingWindow=1, n_bins=10, tol=0.5, n_jobs=1):
     clf = HBOS(slidingWindow=slidingWindow, n_bins=n_bins, tol=tol)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_Sub_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_jobs=1):
@@ -174,6 +184,7 @@ def run_Sub_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_
     clf = OCSVM(slidingWindow=slidingWindow, kernel=kernel, nu=nu)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, slidingWindow=1, n_jobs=1):
@@ -181,6 +192,7 @@ def run_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, slidingWindow=1, n_jo
     clf = OCSVM(slidingWindow=slidingWindow, kernel=kernel, nu=nu)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_Sub_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_jobs=1):
@@ -189,6 +201,7 @@ def run_Sub_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_j
     clf = MCD(slidingWindow=slidingWindow, support_fraction=support_fraction)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_MCD(data_train, data_test, support_fraction=None, slidingWindow=1, n_jobs=1):
@@ -196,6 +209,7 @@ def run_MCD(data_train, data_test, support_fraction=None, slidingWindow=1, n_job
     clf = MCD(slidingWindow=slidingWindow, support_fraction=support_fraction)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_Sub_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1):
@@ -204,6 +218,7 @@ def run_Sub_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1)
     clf = KNN(slidingWindow=slidingWindow, n_neighbors=n_neighbors,method=method, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_KNN(data, slidingWindow=1, n_neighbors=10, method='largest', n_jobs=1):
@@ -271,6 +286,7 @@ def run_AutoEncoder(data_train, data_test, window_size=100, hidden_neurons=[64, 
     clf = AutoEncoder(slidingWindow=window_size, hidden_neurons=hidden_neurons, batch_size=128, epochs=50)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_CNN(data_train, data_test, window_size=100, num_channel=[32, 32, 40], lr=0.0008, n_jobs=1):
@@ -278,6 +294,7 @@ def run_CNN(data_train, data_test, window_size=100, num_channel=[32, 32, 40], lr
     clf = CNN(window_size=window_size, num_channel=num_channel, feats=data_test.shape[1], lr=lr, batch_size=128)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_LSTMAD(data_train, data_test, window_size=100, lr=0.0008):
@@ -292,6 +309,7 @@ def run_TranAD(data_train, data_test, win_size=10, lr=1e-3):
     clf = TranAD(win_size=win_size, feats=data_test.shape[1], lr=lr)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_AnomalyTransformer(data_train, data_test, win_size=100, lr=1e-4, batch_size=128):
@@ -299,6 +317,7 @@ def run_AnomalyTransformer(data_train, data_test, win_size=100, lr=1e-4, batch_s
     clf = AnomalyTransformer(win_size=win_size, input_c=data_test.shape[1], lr=lr, batch_size=batch_size)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_OmniAnomaly(data_train, data_test, win_size=100, lr=0.002):
@@ -306,13 +325,15 @@ def run_OmniAnomaly(data_train, data_test, win_size=100, lr=0.002):
     clf = OmniAnomaly(win_size=win_size, feats=data_test.shape[1], lr=lr)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_USAD(data_train, data_test, win_size=5, lr=1e-4):
     from ..models.USAD import USAD
-    clf = USAD(win_size=win_size, feats=data_test.shape[1], lr=lr, epochs=1000)
+    clf = USAD(win_size=win_size, feats=data_test.shape[1], lr=lr, epochs=100)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_Donut(data_train, data_test, win_size=120, lr=1e-4, batch_size=128):
@@ -320,6 +341,7 @@ def run_Donut(data_train, data_test, win_size=120, lr=1e-4, batch_size=128):
     clf = Donut(win_size=win_size, input_c=data_test.shape[1], lr=lr, batch_size=batch_size)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_TimesNet(data_train, data_test, win_size=96, lr=1e-4):
@@ -327,6 +349,7 @@ def run_TimesNet(data_train, data_test, win_size=96, lr=1e-4):
     clf = TimesNet(win_size=win_size, enc_in=data_test.shape[1], lr=lr, epochs=50)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_FITS(data_train, data_test, win_size=100, lr=1e-3):
@@ -334,6 +357,7 @@ def run_FITS(data_train, data_test, win_size=100, lr=1e-3):
     clf = FITS(win_size=win_size, input_c=data_test.shape[1], lr=lr, batch_size=128)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_OFA(data_train, data_test, win_size=100, batch_size = 64):
@@ -341,6 +365,7 @@ def run_OFA(data_train, data_test, win_size=100, batch_size = 64):
     clf = OFA(win_size=win_size, enc_in=data_test.shape[1], epochs=10, batch_size=batch_size)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 def run_Lag_Llama(data, win_size=96, batch_size=64):
@@ -348,6 +373,7 @@ def run_Lag_Llama(data, win_size=96, batch_size=64):
     clf = Lag_Llama(win_size=win_size, input_c=data.shape[1], batch_size=batch_size)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_Chronos(data, win_size=50, batch_size=64):
@@ -355,6 +381,7 @@ def run_Chronos(data, win_size=50, batch_size=64):
     clf = Chronos(win_size=win_size, prediction_length=1, input_c=data.shape[1], model_size='base', batch_size=batch_size)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_TimesFM(data, win_size=96):
@@ -362,6 +389,7 @@ def run_TimesFM(data, win_size=96):
     clf = TimesFM(win_size=win_size)
     clf.fit(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_MOMENT_ZS(data, win_size=256):
@@ -371,6 +399,7 @@ def run_MOMENT_ZS(data, win_size=256):
     # Zero shot
     clf.zero_shot(data)
     score = clf.decision_scores_
+    del clf
     return score.ravel()
 
 def run_MOMENT_FT(data_train, data_test, win_size=256):
@@ -380,6 +409,7 @@ def run_MOMENT_FT(data_train, data_test, win_size=256):
     # Finetune
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 # def run_M2N2(data_train, data_test, epochs=10, win_size=12, lr=1e-3, batch_size=128):
@@ -388,6 +418,7 @@ def run_M2N2(data_train, data_test, epochs=10, win_size=20, lr=1e-4, batch_size=
     clf = M2N2(win_size=win_size, num_channels=data_test.shape[1], lr=lr, batch_size=batch_size, epochs=epochs, gamma=gamma,latent_dim=64,stride=win_size//2)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
+    del clf
     return score.ravel()
 
 

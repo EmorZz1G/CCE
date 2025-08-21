@@ -5,7 +5,7 @@ import copy
 from itertools import groupby
 from operator import itemgetter
 
-METRIC_LIST = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'AUC-PR', 'PA%K', 'TaPR']
+METRIC_LIST = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'AUC-PR', 'PA%K', 'TaPR', 'PATE']
 
 try:
     from eTaPR_pkg.tapr import print_result, compute
@@ -138,7 +138,8 @@ class ConfidenceConsistencyEvaluation:
     4. 通过不确定度与真实标签的一致性来评估模型
     """
     
-    def __init__(self,  method='bayesian', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False):
+    def __init__(self,  method='bayesian', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False,
+                 bayesian_scale=10):
         """
         初始化评估器
         
@@ -150,6 +151,7 @@ class ConfidenceConsistencyEvaluation:
         self.confidence_level = confidence_level
         self.method = method
         self.positive_constraint = positive_constraint
+        self.bayesian_scale = bayesian_scale  # 贝叶斯方法的缩放因子
     
     def estimate_uncertainty(self, model_scores, method='bayesian'):
         """
@@ -169,7 +171,7 @@ class ConfidenceConsistencyEvaluation:
             # TODO, TODEBUG
             return self._ensemble_uncertainty(model_scores)
         elif method == 'bayesian':
-            return self._bayesian_uncertainty(model_scores)
+            return self._bayesian_uncertainty(model_scores, self.bayesian_scale)
         elif method == 'gaussian':
             return self._gaussian_uncertainty(model_scores)
         else:
@@ -419,6 +421,8 @@ class basic_metricor():
             results = self.metric_PR(labels, score)
         elif name == 'VUS-ROC':
             results = self.metric_VUS_ROC(labels, score)
+        elif name == 'PATE':
+            results = self.metric_PATE(labels, score, **kwargs)
         else:
             raise ValueError(f"Unsupported metric name: {name}")
         
@@ -494,9 +498,8 @@ class basic_metricor():
         F1_Per_K = PointF1PA1
         return F1_Per_K, Pre, Rec
     
-    def metric_CCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30):
-        cce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples)
-        # score = uce.compute_confidence_consistency_score(labels, scores)
+    def metric_CCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30, positive_constraint=False, bayesian_scale=10):
+        cce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples, positive_constraint, bayesian_scale)
         score = cce.compute_confidence_consistency_score_v2(labels, scores)
         return score
 

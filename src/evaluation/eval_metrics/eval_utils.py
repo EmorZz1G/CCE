@@ -408,12 +408,27 @@ real_world_configs = [
     {'dataset_name': 'SMD_Ori_Pikled', 'index': "3-1"},
     {'dataset_name': 'PSM'},
     {'dataset_name': 'SWAT'},
-    {'dataset_name': 'NIPS_TS_Creditcard'},
+    {'dataset_name': 'NIPS_TS_Creditcard'}
 ]
 
 REAL_WORLD_CASE_NUM = len(real_world_configs)
 
+extra_data_configs = [
+    {'dataset_name': 'UCR', 'index': "123"},
+    {'dataset_name': 'UCR', 'index': "124"},
+    {'dataset_name': 'UCR', 'index': "125"},
+    {'dataset_name': 'UCR', 'index': "126"},
+    {'dataset_name': 'UCR', 'index': "152"}, 
+    {'dataset_name': 'UCR', 'index': "153"}, 
+    {'dataset_name': 'UCR', 'index': "154"}, 
+    {'dataset_name': 'UCR', 'index': "155"}, 
+]
+
+EXTRA_REAL_WORLD_CASE_NUM = len(extra_data_configs)
+
 from functools import lru_cache
+
+
 
 @lru_cache(maxsize=20)
 def generate_real_world_dataset(case_idx=0, return_data=True):
@@ -432,7 +447,13 @@ def generate_real_world_dataset(case_idx=0, return_data=True):
     data_pth_ = os.path.join(data_pth, dataset_name)
     dataset = get_loader_segment(index_, data_path=data_pth_, batch_size=100, win_size=100, step=100, dataset=dataset_name, ret_data=return_data)
     if config.get('index', None) is not None:
-        dataset_name_new = f"SMD-{index_}"
+        if "SMD" in dataset_name:
+            dataset_name_new = f"SMD-{index_}"
+        elif "UCR" in dataset_name:
+            dataset_name_new = f"UCR-{index_}"
+        else:
+            print(f"Dataset name {dataset_name} does not match any known patterns for index naming.")
+            dataset_name_new = f"{dataset_name}-{index_}"
     else:
         dataset_name_new = f"{dataset_name}"
     
@@ -442,3 +463,37 @@ def generate_real_world_dataset(case_idx=0, return_data=True):
     else:
         return dataset_name_new, dataset
     
+
+    
+@lru_cache(maxsize=20)
+def generate_real_world_dataset_extra(case_idx=0, return_data=True):
+    def get_config(case_idx):
+        if not isinstance(case_idx, int):
+            raise ValueError(f"case_idx must be an integer, got {type(case_idx)}. And it should be between 0 and {EXTRA_REAL_WORLD_CASE_NUM - 1}.")
+        if case_idx < 0 or case_idx >= EXTRA_REAL_WORLD_CASE_NUM:
+            raise ValueError(f"Invalid case index, case_idx={case_idx}. It should be between 0 and {EXTRA_REAL_WORLD_CASE_NUM - 1}.")
+        return extra_data_configs[case_idx]
+    
+    config = get_config(case_idx)
+    # Here you would implement the logic to generate the real-world dataset based on the config
+    # For now, we just return the config as a placeholder
+    dataset_name = config['dataset_name']
+    index_ = config.get('index', 1)
+    data_pth_ = os.path.join(data_pth, dataset_name)
+    dataset = get_loader_segment(index_, data_path=data_pth_, batch_size=100, win_size=100, step=100, dataset=dataset_name, ret_data=return_data)
+    if config.get('index', None) is not None:
+        if "SMD" in dataset_name:
+            dataset_name_new = f"SMD-{index_}"
+        elif "UCR" in dataset_name:
+            dataset_name_new = f"UCR-{index_}"
+        else:
+            print(f"Dataset name {dataset_name} does not match any known patterns for index naming.")
+            dataset_name_new = f"{dataset_name}-{index_}"
+    else:
+        dataset_name_new = f"{dataset_name}"
+    
+    if return_data:
+        train_x, test_x, test_y = dataset.load_data()
+        return dataset_name_new, train_x, test_x, test_y
+    else:
+        return dataset_name_new, dataset

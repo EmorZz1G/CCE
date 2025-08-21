@@ -1,0 +1,11 @@
+\begin{tabular}{lrrrrr}
+\toprule
+ & CCE & Reduced-F1 & eTaPR & Aff-F1 & VUS-ROC \\
+\midrule
+PreQ1.0-NegP0.05-R & 0.764 & 0.750 & 0.712 & 0.940 & 0.983 \\
+PreQ0.9-NegP0.05-R & 0.707 & 0.706 & 0.706 & 0.957 & 0.974 \\
+PreQ0.9-NegP0.1-R & 0.658 & 0.800 & 0.732 & 0.940 & 0.969 \\
+PreQ0.9-NegP0.3-R & 0.513 & 0.353 & 0.459 & 0.788 & 0.905 \\
+PreQ0.8-NegP0.3-R & 0.417 & 0.480 & 0.516 & 0.811 & 0.888 \\
+\bottomrule
+\end{tabular}

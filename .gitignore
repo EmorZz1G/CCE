@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 latex/
+*.npy
 
 # C extensions
 *.so
