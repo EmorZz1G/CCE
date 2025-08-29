@@ -38,7 +38,7 @@ def ana_UCR():
     df = df[df['metric_name'].isin(metric_list_)]
     df.loc[df['model_name'] == 'AnomalyTransformer', 'model_name'] = 'A.T.'
     case_name_list = df['case_name'].unique().tolist() + ['Avg.']
-    case_name_list = ['UCR-125','UCR-126','UCR-154']
+    case_name_list = ['UCR-125','UCR-154']
     model_list = ['LOF','IForest','LSTMAD', 'USAD', 'AnomalyTransformer','A.T.','Random']
     df = df.sort_values(by='metric_name', key=lambda x: x.map(lambda name: metric_list_.index(name) if name in metric_list_ else len(metric_list_)))
     for case_name in case_name_list:
@@ -208,8 +208,8 @@ def ana_msl_etal():
         f.write(latex_str)
 
 def main():
-    # ana_UCR()
-    ana_msl_etal()
+    ana_UCR()
+    # ana_msl_etal()
 
 
 if __name__ == '__main__':

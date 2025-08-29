@@ -277,6 +277,6 @@ def ana_cce_hyperparam(task_type='AccQ'):
     plot_3d_metrics(results_df)
     
 if __name__ == "__main__":
-    # eval_latency(cnt=3)
+    eval_latency(cnt=3)
     print("Latency evaluation completed.")
     ana_cce_hyperparam()

@@ -42,6 +42,6 @@ def run_evals(default_baseline_list, model_type_list):
 # run_evals(default_baseline_list, model_type_list)
 
 
-default_baseline_list = ['PATE']
+default_baseline_list = ['CCE']
 model_type_list = ['AccQ', 'LowDisAccQ', 'PreQ-NegP', 'AccQ-R', 'LowDisAccQ-R', 'PreQ-NegP-R']
 run_evals(default_baseline_list, model_type_list)

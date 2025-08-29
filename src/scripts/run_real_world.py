@@ -1,10 +1,11 @@
 default_metric_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC','PATE']
+default_metric_list = ['CCE']
 model_list = [ 'LOF', 'IForest', 'LSTMAD', 'USAD', 'AnomalyTransformer', 'TimesNet', 'Donut']
 model_list = [ 'LSTMAD', 'USAD', 'AnomalyTransformer', 'TimesNet', 'Donut']
 model_list = ['AnomalyTransformer', 'TimesNet', 'Donut']
 model_list = ['Donut']
 model_list = ['Random', 'LOF','IForest','LSTMAD', 'USAD', 'AnomalyTransformer']
-model_list = ['Random']
+# model_list = ['Random']
 
 
 import subprocess
@@ -33,7 +34,7 @@ def run_evals(default_metric_list, model_type_list):
     subprocess.run(['pwd'])
     # 将列表转换为字符串
     cmd = ['python3', 'eval_metric_real_model.py', '--metric_list'] + default_metric_list + ['--model_list'] + model_type_list
-    cmd_score = ['python3', 'eval_metric_real_model.py', '--save_score', '--metric_list'] + default_metric_list + ['--model_list'] + model_type_list + ['--dataset_id_list'] + ['5','6']
+    cmd_score = ['python3', 'eval_metric_real_model.py', '--save_score', '--metric_list'] + default_metric_list + ['--model_list'] + model_type_list + ['--dataset_id_list'] + ['2','6']
 #     cmd = ['python3', 'eval_metric_real_model.py', 
 #             '--metric_list'] + default_metric_list + ['--model_list'] + model_type_list + ['--dataset_id_list'] + ['1']
 #     tmp_cmd = ['python3', 'eval_metric_real_model.py', 

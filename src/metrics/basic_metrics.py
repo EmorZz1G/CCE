@@ -138,7 +138,7 @@ class ConfidenceConsistencyEvaluation:
     4. 通过不确定度与真实标签的一致性来评估模型
     """
     
-    def __init__(self,  method='bayesian', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False,
+    def __init__(self,  method='bayesian_v2', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False,
                  bayesian_scale=10):
         """
         初始化评估器
@@ -172,6 +172,8 @@ class ConfidenceConsistencyEvaluation:
             return self._ensemble_uncertainty(model_scores)
         elif method == 'bayesian':
             return self._bayesian_uncertainty(model_scores, self.bayesian_scale)
+        elif method == 'bayesian_v2':
+            return self._bayesian_uncertainty_v2(model_scores, self.bayesian_scale)
         elif method == 'gaussian':
             return self._gaussian_uncertainty(model_scores)
         else:
@@ -196,6 +198,20 @@ class ConfidenceConsistencyEvaluation:
         
         return uncertainty
     
+    def _bayesian_uncertainty_v2(self, data, scale=10):
+        # 计算样本均值
+        mean_x = np.mean(data)
+        # 计算样本二阶中心矩
+        m2 = np.mean((data - mean_x) ** 2)
+
+        # 估计alpha和beta
+        alpha = mean_x * ((mean_x * (1 - mean_x) / m2) - 1) * scale + 1
+        beta = (1 - mean_x) * ((mean_x * (1 - mean_x) / m2) - 1) * scale + 1
+
+        # 计算Beta分布的方差
+        uncertainty = (alpha * beta) / ((alpha + beta) ** 2 * (alpha + beta + 1))
+        return uncertainty
+    
     def _ensemble_uncertainty(self, model_scores):
         """
         使用集成方法估计不确定度（模拟多个模型的预测）
@@ -213,6 +229,20 @@ class ConfidenceConsistencyEvaluation:
         ensemble_scores = np.array(ensemble_scores)
         uncertainty = np.var(ensemble_scores, axis=0)
         
+        return uncertainty
+    
+    def _bayesian_uncertainty_v2(self, data, scale=1):
+        # 计算样本均值
+        mean_x = np.mean(data)
+        # 计算样本二阶中心矩
+        m2 = np.mean((data - mean_x) ** 2)
+
+        # 估计alpha和beta
+        alpha = mean_x * ((mean_x * (1 - mean_x) / (m2+1e-8)) - 1)
+        beta = (1 - mean_x) * ((mean_x * (1 - mean_x) / (m2+1e-8)) - 1)
+
+        # 计算Beta分布的方差
+        uncertainty = (alpha * beta) / ((alpha + beta) ** 2 * (alpha + beta + 1))
         return uncertainty
     
     def _bayesian_uncertainty(self, model_scores, scale=10):
@@ -498,7 +528,7 @@ class basic_metricor():
         F1_Per_K = PointF1PA1
         return F1_Per_K, Pre, Rec
     
-    def metric_CCE(self, labels, scores, method='bayesian', confidence_level=0.5, n_samples=30, positive_constraint=False, bayesian_scale=10):
+    def metric_CCE(self, labels, scores, method='bayesian_v2', confidence_level=0.5, n_samples=30, positive_constraint=False, bayesian_scale=10):
         cce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples, positive_constraint, bayesian_scale)
         score = cce.compute_confidence_consistency_score_v2(labels, scores)
         return score

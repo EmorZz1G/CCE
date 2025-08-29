@@ -2,10 +2,11 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+logs_backup/
 latex/
 *.npy
 
+/logs/
 # C extensions
 *.so
 
