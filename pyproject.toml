@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cce"
-version = "0.1.0"
+version = "0.2.0"
 description = "Confidence-Consistency Evaluation for Time Series Anomaly Detection"
 readme = "README.md"
 license = "MIT"
@@ -92,6 +92,9 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include =["cce", "evaluation", "metrics", "utils", "data_utils"]  # 显式列出所有顶级模块
+exclude = ["*.egg-info", ".cce", "scripts", "tests"]
+
 
 [tool.setuptools.package-data]
 cce = ["*.yaml", "*.yml", "*.json", "*.txt"]
@@ -150,7 +153,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["/src/cce"]
+source = ["/src"]
 omit = [
     "*/tests/*",
     "*/test_*",

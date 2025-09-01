@@ -19,7 +19,7 @@
 
     `eval_latency_baselines.py --baseline NewMetric`
 4. 随后会在`CCE/logs/NewMetric`中生成所有案例的测试结果。
-5. **注意**，如果需要使用真实数据集，那么需要将数据集放置在`CCE/datasets`中。或者，你也可以设置全局配置，在`CCE/global_config.yaml`中修改`datasets_abs_path: ABSOLUTE/PATH/OF/DATASETS`。
+5. **注意**，如果需要使用真实数据集，那么需要将数据集放置在`CCE/datasets`中。或者，你也可以设置全局配置，在`CCE/default_config.yaml`中修改`datasets_path: ABSOLUTE/PATH/OF/DATASETS`。
 
 ## 支持的测评
 1. 指标计算时延。

@@ -145,7 +145,8 @@
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-              XXXXX
+              Time Series Anomaly Detection metrics serve as crucial tools for model evaluation. However, existing metrics suffer from several limitations: insufficient discriminative power, strong hyperparameter dependency, sensitivity to perturbations, and high computational overhead. This paper introduces Confidence-Consistency Evaluation (CCE), a novel evaluation metric that simultaneously measures prediction confidence and uncertainty consistency. By employing Bayesian estimation to quantify the uncertainty of anomaly scores, we construct both global and event-level confidence and consistency scores for model predictions, resulting in a concise CCE metric. Theoretically and experimentally, we demonstrate that CCE possesses strict boundedness, Lipschitz robustness against score perturbations, and linear time complexity $\mathcal{O}(n)$.
+   Furthermore, we establish RankEval, a benchmark for comparing the ranking capabilities of various metrics. RankEval represents the first standardized and reproducible evaluation pipeline that enables objective comparison of evaluation metrics. Both CCE and RankEval implementations are fully open-source
             </p>
           </div>
         </div>
@@ -163,7 +164,10 @@
   </h2>
   <p>
   </div>
-
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
   <div class="ranking-table-container">
     <table class="ranking-table">
       <caption>
@@ -390,7 +394,12 @@
       </tbody>
     </table>
   </div>
+</div>
+</div>
+</div>
+</section>
 
+  
   <!-- Image carousel -->
   <!-- <section class="hero is-small">
     <div class="hero-body">
@@ -409,9 +418,9 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">XXXX</h2>
+          <h2 class="title is-3">Citation</h2>
           <div class="content has-text-justified">
-            XXXXX
+            TODO
           </div>
         </div>
       </div>

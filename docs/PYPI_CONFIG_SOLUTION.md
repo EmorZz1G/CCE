@@ -4,7 +4,7 @@
 
 在发布CCE包到PyPI时，原有的配置系统存在以下问题：
 
-1. **硬编码路径问题**：`global_config.yaml` 中的 `datasets_abs_path` 是绝对路径，用户无法使用
+1. **硬编码路径问题**：`global_config.yaml` 中的 `datasets_path` 是绝对路径，用户无法使用
 2. **配置文件位置问题**：代码中硬编码了配置文件路径，用户安装后可能找不到
 3. **用户体验问题**：用户需要手动创建和配置 `global_config.yaml` 文件
 
@@ -14,7 +14,7 @@
 
 创建了新的配置管理模块 `src/cce/config.py`，支持多种配置方式：
 
-- **当前工作目录**: `./cce_config.yaml`
+- **当前工作目录**: `.cce/cce_config.yaml`
 - **用户主目录**: `~/.cce/config.yaml`
 - **环境变量**: `CCE_CONFIG_PATH` 指定的路径
 - **包默认配置**: 内置的默认配置

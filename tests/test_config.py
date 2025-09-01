@@ -42,7 +42,7 @@ def test_config_system():
                 print(f"   ✅ 配置文件存在")
                 with open(config_path, 'r') as f:
                     content = f.read()
-                    if 'datasets_abs_path' in content:
+                    if 'datasets_path' in content:
                         print(f"   ✅ 配置文件包含数据集路径配置")
                     else:
                         print(f"   ❌ 配置文件缺少数据集路径配置")
@@ -55,7 +55,7 @@ def test_config_system():
             # 创建测试配置文件
             test_config_path = Path(temp_dir) / 'cce_config.yaml'
             with open(test_config_path, 'w') as f:
-                f.write("datasets_abs_path: /test/datasets\n")
+                f.write("datasets_path: /test/datasets\n")
             
             # 切换到测试目录
             original_cwd = os.getcwd()

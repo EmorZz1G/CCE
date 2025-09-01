@@ -41,7 +41,7 @@ CCE支持多种配置文件位置，按优先级排序：
 
 ```yaml
 # 数据集路径 - 支持绝对路径和相对路径
-datasets_abs_path: ~/.cce/datasets
+datasets_path: ~/.cce/datasets
 
 # 日志级别: DEBUG, INFO, WARNING, ERROR
 log_level: INFO
@@ -128,7 +128,7 @@ export CCE_DATASETS_PATH=/path/to/datasets
 ```yaml
 # CCE配置文件
 # 数据集路径 - 请根据您的实际情况修改
-datasets_abs_path: /home/user/datasets
+datasets_path: /home/user/datasets
 
 # 日志配置
 log_level: INFO
@@ -183,7 +183,7 @@ A: CCE会显示错误信息并回退到默认配置。请检查YAML语法是否�
    cce config create
    ```
 
-2. 将旧配置中的 `datasets_abs_path` 复制到新配置文件中
+2. 将旧配置中的 `datasets_path` 复制到新配置文件中
 
 3. 删除旧的 `global_config.yaml` 文件
 

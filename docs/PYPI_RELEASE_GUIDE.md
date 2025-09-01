@@ -48,15 +48,12 @@ conda install build wheel twine
 ### 1. 清理之前的构建
 
 ```bash
-cd build
-rm -rf dist/  *.egg-info/
+rm -rf dist/ build/ *.egg-info/ .eggs/ && python -m build
 ```
 
 ### 2. 构建分发包
 
 ```bash
-# 在build目录中构建
-cd build
 python -m build
 
 # 构建完成后，检查生成的文件
@@ -87,6 +84,7 @@ twine check dist/*
 ```bash
 # 上传到测试PyPI
 twine upload --repository testpypi dist/*
+# 上传到正式服PyPI
 twine upload dist/*
 
 # 系统会提示输入用户名和密码

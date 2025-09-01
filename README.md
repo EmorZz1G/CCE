@@ -37,7 +37,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-**注意**: 构建相关文件位于 `` 目录中。详细构建说明请参考 `BUILD.md`。
+**Note**: Build-related files are located in the `docs` directory. For detailed build instructions, please refer to `docs/*.md`.
 
 ## 🔧 Requirements
 
@@ -133,10 +133,8 @@ CCE/
 - **Discriminative Power**: Ranking-based and value-change-ratio analysis
 
 ## 🔄 Updates
-
-- **2025-01-XX**: Project initialization and website setup
-- **2025-01-XX**: Core evaluation framework implementation
-- **2025-01-XX**: Multi-metric support and benchmarking
+- **2025-08-26**: Core evaluation framework implementation
+- **2025-08-26**: Multi-metric support and benchmarking
 
 ## 📋 TODO List
 
@@ -156,6 +154,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **FTSAD**: For providing the time series anomaly detection evaluation framework
+- **SimAD**: For dataset load.
 - **TSB-AD**: For model implementation code
 - **Community**: For feedback and contributions
 

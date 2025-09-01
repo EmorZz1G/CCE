@@ -367,14 +367,14 @@ except ImportError:
     data_pth = os.path.join(proj_pth, 'datasets')
     
     # 尝试读取项目路径下的global配置文件
-    glo_config = os.path.join(proj_pth, 'global_config.yaml')
+    glo_config = os.path.join(proj_pth, 'default_config.yaml')
     if os.path.exists(glo_config):
         import yaml
         with open(glo_config, 'r') as f:
             global_config = yaml.safe_load(f)
-            datasets_abs_path = global_config.get('datasets_abs_path', None)
-            if datasets_abs_path is not None:
-                data_pth = datasets_abs_path
+            datasets_path = global_config.get('datasets_path', None)
+            if datasets_path is not None:
+                data_pth = datasets_path
                 print(f"Using datasets path from global config: {data_pth}")
     else:
         print(f"Using default datasets path: {data_pth}")

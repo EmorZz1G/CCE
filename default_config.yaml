@@ -3,16 +3,16 @@
 
 # 数据集路径 - 用户可以根据需要修改
 # 支持绝对路径和相对路径
-datasets_abs_path: ~/.cce/datasets
+datasets_path: ./datasets
 
 # 日志级别: DEBUG, INFO, WARNING, ERROR
 log_level: INFO
 
 # 缓存目录
-cache_dir: ~/.cce/cache
+cache_dir: ./cache
 
 # 最大工作线程数
-max_workers: 4
+max_workers: 8
 
 # 其他配置选项
 evaluation:
@@ -23,7 +23,7 @@ evaluation:
   save_intermediate: true
   
   # 结果保存目录
-  results_dir: ~/.cce/results
+  results_dir: ./results
 
 # 数据集相关配置
 datasets:
@@ -33,5 +33,3 @@ datasets:
   # 是否自动下载缺失的数据集
   auto_download: false
   
-  # 数据集缓存策略
-  cache_strategy: memory

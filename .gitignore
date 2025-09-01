@@ -9,6 +9,10 @@ latex/
 /logs/
 # C extensions
 *.so
+/build/
+bkup
+.cce
+~/
 
 # Distribution / packaging
 .Python

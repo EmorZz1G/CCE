@@ -3,7 +3,7 @@ include /README.md
 include /README_ZH.md
 include /LICENSE
 include /requirements.txt
-include /global_config.yaml
+include /default_config.yaml
 include /PROJECT_STRUCTURE.md
 include /PYPI_RELEASE_GUIDE.md
 

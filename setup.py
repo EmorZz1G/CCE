@@ -64,6 +64,24 @@ def get_requirements():
             return [line.strip() for line in f if line.strip() and not line.startswith('#')]
     return []
 
+def post_install_setup():
+    """Post-installation setup: create global configuration"""
+    try:
+        # Import the config module after installation
+        from src.config import create_install_config
+        
+        # Create global configuration
+        config_path = create_install_config()
+        print(f"✅ CCE global configuration created: {config_path}")
+        print("💡 You can now use 'cce config create' in your projects to copy this configuration")
+        
+    except ImportError as e:
+        print(f"⚠️  Warning: Could not create global configuration: {e}")
+        print("💡 You can manually create it later with: cce config install")
+    except Exception as e:
+        print(f"⚠️  Warning: Failed to create global configuration: {e}")
+        print("💡 You can manually create it later with: cce config install")
+
 # Get package information
 try:
     pkg_info = get_package_info()
@@ -141,6 +159,9 @@ setup(
         "console_scripts": [
             "cce=cce.cli:main",
         ],
+        "setuptools.installation": [
+            "cce_post_install=cce.setup:post_install_setup",
+        ],
     },
     
     # Classifiers
@@ -174,3 +195,15 @@ setup(
     # Zip safe
     zip_safe=False,
 )
+
+# Post-installation hook
+if __name__ == "__main__":
+    # Run post-installation setup after successful installation
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] in ['install', 'develop']:
+        # Only run post-install setup for install/develop commands
+        try:
+            post_install_setup()
+        except Exception as e:
+            print(f"⚠️  Post-installation setup failed: {e}")
+            print("💡 You can manually run: cce config install")
