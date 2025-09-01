@@ -33,6 +33,9 @@ pip search cce  # 如果命令可用
 # 或者直接访问 https://pypi.org/project/cce/
 ```
 
+## 配置API
+vi ~/.pypirc
+
 ## 🛠️ 安装构建工具
 
 ```bash
