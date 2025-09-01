@@ -133,5 +133,90 @@ body {
   font-size: smaller;
 }
 
+/* Table styles for ranking comparison */
+.ranking-table-container {
+  margin: 2rem 0;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.9rem;
+  background-color: white;
+  margin: 0;
+}
+
+.ranking-table caption {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #363636;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.ranking-table th {
+  background-color: #f5f5f5;
+  color: #363636;
+  font-weight: 700;
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px solid #dbdbdb;
+  font-size: 0.85rem;
+}
+
+.ranking-table td {
+  padding: 10px 8px;
+  text-align: center;
+  border: 1px solid #dbdbdb;
+  vertical-align: middle;
+}
+
+.ranking-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.ranking-table tbody tr:nth-child(even) {
+  background-color: white;
+}
+
+.ranking-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Task column with merged cells */
+.ranking-table .task-cell {
+  font-weight: 600;
+  background-color: #efefef !important;
+  border-right: 2px solid #dbdbdb;
+}
+
+/* Best and second-best value highlighting */
+.ranking-table .best-value {
+  font-weight: bold;
+  color: #2d3748;
+}
+
+.ranking-table .second-best-value {
+  text-decoration: underline;
+  color: #2d3748;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ranking-table {
+    font-size: 0.8rem;
+  }
+  
+  .ranking-table th,
+  .ranking-table td {
+    padding: 8px 4px;
+  }
+}
+
 
 

@@ -12,7 +12,7 @@ latex/
 
 # Distribution / packaging
 .Python
-build/
+
 develop-eggs/
 dist/
 downloads/
@@ -73,7 +73,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/_
 
 # PyBuilder
 .pybuilder/
@@ -119,7 +119,7 @@ ipython_config.py
 #pdm.lock
 #pdm.toml
 .pdm-python
-.pdm-build/
+.pdm-
 
 # pixi
 #   Similar to Pipfile.lock, it is generally recommended to include pixi.lock in version control.

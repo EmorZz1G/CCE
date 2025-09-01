@@ -1,0 +1,19 @@
+# Core dependencies
+torch>=1.8.0
+numpy>=1.19.0
+scipy>=1.7.0
+scikit-learn>=1.0.0
+pandas>=1.3.0
+matplotlib>=3.3.0
+seaborn>=0.11.0
+tqdm>=4.60.0
+pyyaml>=5.4.0
+deprecated>=1.2.0
+
+# Optional dependencies for enhanced functionality
+# Uncomment if needed:
+# jupyter>=1.0.0
+# ipython>=7.0.0
+# plotly>=5.0.0
+# bokeh>=2.4.0
+# streamlit>=1.20.0 

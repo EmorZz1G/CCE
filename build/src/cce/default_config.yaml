@@ -1,0 +1,37 @@
+# CCE默认配置文件
+# 这个文件包含CCE包的默认配置
+
+# 数据集路径 - 用户可以根据需要修改
+# 支持绝对路径和相对路径
+datasets_abs_path: ~/.cce/datasets
+
+# 日志级别: DEBUG, INFO, WARNING, ERROR
+log_level: INFO
+
+# 缓存目录
+cache_dir: ~/.cce/cache
+
+# 最大工作线程数
+max_workers: 4
+
+# 其他配置选项
+evaluation:
+  # 评估时的随机种子
+  random_seed: 42
+  
+  # 是否保存中间结果
+  save_intermediate: true
+  
+  # 结果保存目录
+  results_dir: ~/.cce/results
+
+# 数据集相关配置
+datasets:
+  # 默认数据集格式
+  default_format: csv
+  
+  # 是否自动下载缺失的数据集
+  auto_download: false
+  
+  # 数据集缓存策略
+  cache_strategy: memory

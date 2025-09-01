@@ -157,11 +157,238 @@
   <!-- Your image here -->
   <div class="item">
     <p align="center">
-    <img width="1000" src="static/images/fw.png" alt="framework"/>
+    <img width="1000" src="static/images/fw.jpg" alt="framework"/>
     <h2 class="subtitle has-text-centered">
-      The organization of the paper.
+      The framework of the CCE.
   </h2>
   <p>
+  </div>
+
+  <div class="ranking-table-container">
+    <table class="ranking-table">
+      <caption>
+        Comparison of ranking consistency across different indicators (the larger the Sp and Kd, the better; the smaller the MD, the better). 
+        <strong>bold</strong> indicates the best, <u>underlined</u> indicates the second best.
+      </caption>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Score</th>
+          <th>CCE</th>
+          <th>AUC-ROC</th>
+          <th>F1</th>
+          <th>F1-PA</th>
+          <th>Reduced-F1</th>
+          <th>R-based F1</th>
+          <th>eTaPR</th>
+          <th>Aff-F1</th>
+          <th>UAff-F1</th>
+          <th>VUS-ROC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3" class="task-cell">AccQ</td>
+          <td>Sp</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.340</td>
+          <td>0.340</td>
+          <td>0.340</td>
+          <td>0.294</td>
+          <td>0.780</td>
+          <td>0.832</td>
+          <td>0.825</td>
+          <td class="best-value">1.000</td>
+        </tr>
+        <tr>
+          <td>Kd</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.248</td>
+          <td>0.248</td>
+          <td>0.248</td>
+          <td>0.193</td>
+          <td>0.697</td>
+          <td>0.789</td>
+          <td>0.779</td>
+          <td class="best-value">1.000</td>
+        </tr>
+        <tr>
+          <td>MD</td>
+          <td class="best-value">0.000</td>
+          <td class="best-value">0.000</td>
+          <td>2.094</td>
+          <td>2.094</td>
+          <td>2.095</td>
+          <td>2.344</td>
+          <td>1.147</td>
+          <td>0.587</td>
+          <td>0.622</td>
+          <td class="best-value">0.000</td>
+        </tr>
+        <tr>
+          <td rowspan="3" class="task-cell">LowDisAccQ</td>
+          <td>Sp</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.998</td>
+          <td>0.998</td>
+          <td>0.996</td>
+          <td>0.901</td>
+          <td>0.846</td>
+          <td>0.953</td>
+          <td>0.944</td>
+          <td class="best-value">1.000</td>
+        </tr>
+        <tr>
+          <td>Kd</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.993</td>
+          <td>0.993</td>
+          <td>0.990</td>
+          <td>0.895</td>
+          <td>0.760</td>
+          <td>0.927</td>
+          <td>0.915</td>
+          <td class="best-value">1.000</td>
+        </tr>
+        <tr>
+          <td>MD</td>
+          <td class="best-value">0.000</td>
+          <td class="best-value">0.000</td>
+          <td>0.025</td>
+          <td>0.025</td>
+          <td>0.038</td>
+          <td>0.465</td>
+          <td>0.933</td>
+          <td>0.265</td>
+          <td>0.299</td>
+          <td class="best-value">0.000</td>
+        </tr>
+        <tr>
+          <td rowspan="3" class="task-cell">PreQ-NegP-Q</td>
+          <td>Sp</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.928</td>
+          <td>0.925</td>
+          <td>0.895</td>
+          <td>0.681</td>
+          <td>0.878</td>
+          <td>0.883</td>
+          <td>0.872</td>
+          <td class="best-value">1.000</td>
+        </tr>
+        <tr>
+          <td>Kd</td>
+          <td class="best-value">1.000</td>
+          <td class="second-best-value">0.999</td>
+          <td>0.931</td>
+          <td>0.925</td>
+          <td>0.892</td>
+          <td>0.674</td>
+          <td>0.866</td>
+          <td>0.855</td>
+          <td>0.839</td>
+          <td class="best-value">1.000</td>
+        </tr>
+        <tr>
+          <td>MD</td>
+          <td class="best-value">0.000</td>
+          <td class="second-best-value">0.003</td>
+          <td>0.267</td>
+          <td>0.287</td>
+          <td>0.371</td>
+          <td>1.131</td>
+          <td>0.494</td>
+          <td>0.551</td>
+          <td>0.619</td>
+          <td class="second-best-value">0.002</td>
+        </tr>
+        <tr>
+          <td rowspan="3" class="task-cell">PreQ-NegP-P</td>
+          <td>Sp</td>
+          <td class="best-value">1.000</td>
+          <td>0.987</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.789</td>
+          <td>0.876</td>
+          <td>0.920</td>
+          <td>0.891</td>
+          <td>0.990</td>
+        </tr>
+        <tr>
+          <td>Kd</td>
+          <td class="best-value">1.000</td>
+          <td>0.982</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td class="best-value">1.000</td>
+          <td>0.776</td>
+          <td>0.864</td>
+          <td>0.895</td>
+          <td>0.863</td>
+          <td>0.986</td>
+        </tr>
+        <tr>
+          <td>MD</td>
+          <td class="best-value">0.000</td>
+          <td>0.026</td>
+          <td class="best-value">0.000</td>
+          <td class="best-value">0.000</td>
+          <td class="best-value">0.000</td>
+          <td>0.267</td>
+          <td>0.160</td>
+          <td>0.150</td>
+          <td>0.192</td>
+          <td>0.019</td>
+        </tr>
+        <tr>
+          <td rowspan="3" class="task-cell">Avg.</td>
+          <td>Sp</td>
+          <td class="best-value">1.000</td>
+          <td>0.997</td>
+          <td>0.816</td>
+          <td>0.816</td>
+          <td>0.808</td>
+          <td>0.666</td>
+          <td>0.845</td>
+          <td>0.897</td>
+          <td>0.883</td>
+          <td class="second-best-value">0.998</td>
+        </tr>
+        <tr>
+          <td>Kd</td>
+          <td class="best-value">1.000</td>
+          <td>0.995</td>
+          <td>0.793</td>
+          <td>0.792</td>
+          <td>0.783</td>
+          <td>0.635</td>
+          <td>0.797</td>
+          <td>0.866</td>
+          <td>0.849</td>
+          <td class="second-best-value">0.996</td>
+        </tr>
+        <tr>
+          <td>MD</td>
+          <td class="best-value">0.000</td>
+          <td>0.007</td>
+          <td>0.597</td>
+          <td>0.601</td>
+          <td>0.626</td>
+          <td>1.052</td>
+          <td>0.684</td>
+          <td>0.388</td>
+          <td>0.433</td>
+          <td class="second-best-value">0.005</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Image carousel -->
