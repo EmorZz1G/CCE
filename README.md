@@ -1,8 +1,10 @@
 # CCE: Confidence-Consistency Evaluation for Time Series Anomaly Detection
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PyPI](https://img.shields.io/badge/PyPI-CCE-red.svg)](https://pypi.org/project/cce/)
+<p align="center">
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
+  <a href="https://pypi.org/project/cce/"><img src="https://img.shields.io/badge/PyPI-CCE-red.svg" alt="PyPI"></a>
+</p>
 
 A comprehensive evaluation framework for time series anomaly detection metrics, focusing on confidence-consistency evaluation, robustness assessment, and discriminative power analysis.
 
@@ -64,6 +66,16 @@ cce config show
 For detailed configuration options, see [Configuration Guide](docs/CONFIGURATION_GUIDE.md).
 
 ## 📚 Quick Start
+
+### Confidence-Consistency Evaluation (CCE)
+
+```python
+from cce import metrics
+metricor = metrics.basic_metricor()
+CCE_score = metricor.metric_CCE(labels, scores)
+```
+
+## RankEval
 
 ### Basic Usage
 

@@ -242,7 +242,7 @@ class ConfidenceConsistencyEvaluation:
         beta = (1 - mean_x) * ((mean_x * (1 - mean_x) / (m2+1e-8)) - 1)
 
         # 计算Beta分布的方差
-        uncertainty = (alpha * beta) / ((alpha + beta) ** 2 * (alpha + beta + 1))
+        uncertainty = (alpha * beta) / ((alpha + beta) ** 2 * (alpha + beta + 1) + 1e-8)
         return uncertainty
     
     def _bayesian_uncertainty(self, model_scores, scale=10):
