@@ -68,27 +68,26 @@
         <div class="columns is-centered">
           <div class="column has-text-centered">
             <h2 class="title is-1 publication-title">CCE & RankEval: Confidence-Consistency Evaluation for Time Series Anomaly Detection</h2>
-            <!-- <div class="is-size-5 publication-authors">
-              Paper authors
+            <div class="is-size-5 publication-authors">
               <span class="author-block">
-                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">First Author</a><sup>*</sup>,</span>
+                <a href="https://scholar.google.com.tw/citations?user=rn_Xd0kAAAAJ&hl=zh-CN" target="_blank">Zhijie Zhong</a>,</span>
                 <span class="author-block">
-                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Second Author</a><sup>*</sup>,</span>
+                  <a href="https://www2.scut.edu.cn/cs/2017/0129/c22284a327666/page.psp" target="_blank">Zhiwen Yu</a><sup>*</sup>,</span>
                   <span class="author-block">
-                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
+                    <a href="https://www.comp.hkbu.edu.hk/~ymc/" target="_blank">Yiu-ming Cheung</a>
                   </span>
-                  </div> -->
+                  <span class="https://www.researchgate.net/profile/Kaixiang-Yang-5">
+                    <a href="" target="_blank">Kaixiang Yang</a>
+                  </span>
+                  </div> 
 
-            <!-- <div class="is-size-5 publication-authors">
-                    <span class="author-block">Institution Name<br>Conferance name and year</span> -->
-            <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
-            <!-- </div> -->
+
 
             <div class="column has-text-centered">
               <div class="publication-links">
                 <!-- Arxiv PDF link -->
                 <span class="link-block">
-                  <a href="static/pdfs/XXX.pdf" target="_blank"
+                  <a href="static/pdfs/paper.pdf" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fas fa-file-pdf"></i>
@@ -98,18 +97,18 @@
                 </span>
 
                 <span class="link-block">
-                  <a href=href="static/pdfs/XXX.pdf" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
+                  <a href="http://arxiv.org/abs/2509.01098" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
+                      <img src="https://arxiv.org/static/browse/0.3.4/images/arxiv-logomark-small-white.svg" alt="arXiv" style="width: 16px; height: 16px;">
                     </span>
-                    <span>Appendix</span>
+                    <span>arXiv</span>
                   </a>
                 </span>
 
                 <!-- https://github.com/FortAwesome/Font-Awesome/tree/6.7.2/svgs/solid/  -->
                 <!-- Supplementary PDF link -->
-                <span class="link-block">
+                <!-- <span class="link-block">
                   <a href="static/tar/supp_files.zip" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
@@ -117,7 +116,7 @@
                     </span>
                     <span>Supplementary</span>
                   </a>
-                </span>
+                </span> -->
 
                 <!-- Github link -->
                 <span class="link-block">
@@ -171,14 +170,22 @@
   <!-- End paper abstract -->
 
   <!-- Your image here -->
-  <div class="item">
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+  <div class="columns is-centered">
+    <div class="column is-four-fifths"> 
     <p align="center">
-    <img width="1000" src="static/images/fw.jpg" alt="framework"/>
+    <img src="static/images/fw.jpg" alt="framework"/>
     <h2 class="subtitle has-text-centered">
       The framework of the CCE.
   </h2>
+</div>
   <p>
   </div>
+  </div>
+  </section>
+
+
   <section class="section hero is-light">
     <div class="container is-max-desktop">
       <div class="columns is-centered has-text-centered">
@@ -432,11 +439,45 @@
   <section class="section hero is-light">
     <div class="container is-max-desktop">
       <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-3">Citation</h2>
-          <div class="content has-text-justified">
-            <p>TODO</p>
-          </div>
+        <div class="column is-full">
+                      <h2 class="title is-3">Citation</h2>
+            <div class="content has-text-justified">
+              <p class="has-text-centered">If you find our work useful, please cite our paper or give our <a href="https://github.com/EmorZz1G/CCE" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 500;">repo</a> a star ⭐.</p>
+              <div class="box" style="position: relative; background-color: #f5f5f5; border: 1px solid #dbdbdb; margin: 0 20px;">
+                <button class="button is-small is-light" style="position: absolute; top: 10px; right: 10px; z-index: 10;" onclick="copyCitation()">
+                  <span class="icon">
+                    <i class="fas fa-copy"></i>
+                  </span>
+                  <span>Copy</span>
+                </button>
+                <pre style="margin: 0; "><code id="citation-code">@article{zhong2025cce,
+  title={CCE: Confidence-Consistency Evaluation for Time Series Anomaly Detection},
+  author={Zhong, Zhijie and Yu, Zhiwen and Cheung, Yiu-ming and Yang, Kaixiang},
+  journal={arXiv preprint arXiv:2509.01098},
+  year={2025}
+}</code></pre>
+              </div>
+            </div>
+            
+            <script>
+            function copyCitation() {
+              const citationText = document.getElementById('citation-code').textContent;
+              navigator.clipboard.writeText(citationText).then(function() {
+                // 临时改变按钮文本显示复制成功
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span><span>Copied!</span>';
+                button.classList.add('is-success');
+                setTimeout(function() {
+                  button.innerHTML = originalHTML;
+                  button.classList.remove('is-success');
+                }, 2000);
+              }).catch(function(err) {
+                console.error('复制失败: ', err);
+                alert('复制失败，请手动复制');
+              });
+            }
+            </script>
         </div>
       </div>
     </div>
@@ -456,7 +497,7 @@
   <footer class="footer">
     <div class="container">
       <div class="columns is-centered">
-        <div class="column is-8">
+        <div class="column is-full">
           <div class="content">
 
             <p>

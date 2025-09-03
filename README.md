@@ -1,12 +1,16 @@
-# CCE: Confidence-Consistency Evaluation for Time Series Anomaly Detection
+# CCE & RankEval: Confidence-Consistency Evaluation for Time Series Anomaly Detection
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
   <a href="https://pypi.org/project/cce/"><img src="https://img.shields.io/badge/PyPI-CCE-red.svg" alt="PyPI"></a>
+  <a href="http://arxiv.org/abs/2509.01098"><img src="https://img.shields.io/badge/arXiv-2509.01098-b31b1b.svg" alt="arXiv"></a>
 </p>
 
-A comprehensive evaluation framework for time series anomaly detection metrics, focusing on confidence-consistency evaluation, robustness assessment, and discriminative power analysis.
+A comprehensive evaluation framework for time series anomaly detection metrics, focusing on confidence-consistency evaluation, robustness assessment, and discriminative power analysis. This implementation provides novel evaluation metrics and benchmarking tools to improve the reliability and comparability of anomaly detection models.
+
+📄 **Paper**: [arXiv:2509.01098](http://arxiv.org/abs/2509.01098)  
+🌐 **Website**: [CCE & RankEval](https://EmorZz1G.github.io/CCE/)
 
 ## 🚀 Features
 
@@ -173,6 +177,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Contact
 
 For questions and support, please open an issue on GitHub or contact the maintainers.
+
+## 📖 Citation
+
+If you find our work useful, please cite our paper and consider giving us a star ⭐.
+
+```bibtex
+@article{zhong2025cce,
+  title={CCE: Confidence-Consistency Evaluation for Time Series Anomaly Detection},
+  author={Zhong, Zhijie and Yu, Zhiwen and Cheung, Yiu-ming and Yang, Kaixiang},
+  journal={arXiv preprint arXiv:2509.01098},
+  year={2025}
+}
+```
 
 ---
 
