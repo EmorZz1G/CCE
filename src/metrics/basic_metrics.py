@@ -5,7 +5,7 @@ import copy
 from itertools import groupby
 from operator import itemgetter
 
-METRIC_LIST = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'AUC-PR', 'PA%K', 'TaPR', 'PATE']
+METRIC_LIST = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'VUS-PR', 'AUC-PR', 'PA%K', 'TaPR', 'PATE']
 
 try:
     from eTaPR_pkg.tapr import print_result, compute
@@ -442,15 +442,17 @@ class basic_metricor():
         elif name == 'TaPR':
             results = self.metric_TaPR_F1(labels, score, preds=preds, **kwargs)
         elif name == 'Aff-F1':
-            results = self.metric_Affiliation(labels, score, preds=preds)
+            results = self.metric_Affiliation(labels, score, preds=preds, **kwargs)
         elif name == 'UAff-F1':
-            results = self.metric_UN_Affiliation(labels, score, pred=preds)
+            results = self.metric_UN_Affiliation(labels, score, pred=preds, **kwargs)
         elif name == 'AUC-ROC':
             results = self.metric_ROC(labels, score)
         elif name == 'AUC-PR':
             results = self.metric_PR(labels, score)
         elif name == 'VUS-ROC':
-            results = self.metric_VUS_ROC(labels, score)
+            results = self.metric_VUS_ROC(labels, score, **kwargs)
+        elif name == 'VUS-PR':
+            results = self.metric_VUS_PR(labels, score, **kwargs)
         elif name == 'PATE':
             results = self.metric_PATE(labels, score, **kwargs)
         else:
