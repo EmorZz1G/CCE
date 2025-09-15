@@ -8,7 +8,7 @@ A comprehensive framework for evaluating time series anomaly detection methods
 with confidence-consistency metrics.
 """
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __author__ = "EmorZz1G"
 __email__ = "csemor@mail.scut.edu.cn"
 __license__ = "MIT"
