@@ -30,30 +30,63 @@ from . import cli
 # 导入平级包（evaluation、models等与cce平级，在src目录下）
 try:
     import evaluation
-    import models
-    import metrics
-    import utils
-    import data_utils
-    
     # 关键：在sys.modules中注册这些模块，使其看起来像是cce的子包
     sys.modules['cce.evaluation'] = evaluation
-    sys.modules['cce.models'] = models
-    sys.modules['cce.metrics'] = metrics
-    sys.modules['cce.utils'] = utils
-    sys.modules['cce.data_utils'] = data_utils
-    
-    # print("📌 已将平级包绑定到 cce 命名空间")
-    # print(f"cce 包路径：{__file__}")
-    # print(f"cce.evaluation 路径：{evaluation.__file__}")
     
 except ImportError as e:
     print(f"❌ 导入平级包失败: {e}")
-    # 如果导入失败，设置为None
-    globals()['evaluation'] = None
-    globals()['models'] = None
-    globals()['metrics'] = None
-    globals()['utils'] = None
-    globals()['data_utils'] = None
+
+    try:
+        from src import evaluation
+        sys.modules['cce.evaluation'] = evaluation
+    except ImportError as e2:
+        print(f"❌ 备用导入平级包失败: {e2}")
+        # 如果导入失败，设置为None
+        globals()['evaluation'] = None
+
+try: 
+    import models
+
+    sys.modules['cce.models'] = models
+
+except ImportError as e:
+    print(f"❌ 导入平级包失败: {e}")
+    try:
+        from src import models
+        sys.modules['cce.models'] = models
+    except ImportError as e2:
+        print(f"❌ 备用导入平级包失败: {e2}")
+        # 如果导入失败，设置为None  
+        globals()['models'] = None
+
+
+try: 
+
+    import utils
+    sys.modules['cce.utils'] = utils
+except ImportError as e:
+    print(f"❌ 导入平级包失败: {e}")
+    try:
+        from src import utils
+        sys.modules['cce.utils'] = utils
+    except ImportError as e2:
+        print(f"❌ 备用导入平级包失败: {e2}")
+        # 如果导入失败，设置为None  
+        globals()['utils'] = None
+
+try: 
+    import data_utils
+    sys.modules['cce.data_utils'] = data_utils
+except ImportError as e:
+    print(f"❌ 导入平级包失败: {e}")
+    try:
+        from src import data_utils
+        sys.modules['cce.data_utils'] = data_utils
+    except ImportError as e2:
+        print(f"❌ 备用导入平级包失败: {e2}")
+        # 如果导入失败，设置为None  
+        globals()['data_utils'] = None
+
 
 # 定义from cce import *时导出的内容
 __all__ = [
