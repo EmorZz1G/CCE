@@ -8,7 +8,7 @@ A comprehensive framework for evaluating time series anomaly detection methods
 with confidence-consistency metrics.
 """
 
-__version__ = "0.2.1"
+__version__ = "0.2.3"
 __author__ = "EmorZz1G"
 __email__ = "csemor@mail.scut.edu.cn"
 __license__ = "MIT"
@@ -34,8 +34,6 @@ try:
     sys.modules['cce.evaluation'] = evaluation
     
 except ImportError as e:
-    print(f"❌ 导入平级包失败: {e}")
-
     try:
         from src import evaluation
         sys.modules['cce.evaluation'] = evaluation
@@ -50,7 +48,6 @@ try:
     sys.modules['cce.models'] = models
 
 except ImportError as e:
-    print(f"❌ 导入平级包失败: {e}")
     try:
         from src import models
         sys.modules['cce.models'] = models
@@ -61,11 +58,9 @@ except ImportError as e:
 
 
 try: 
-
     import utils
     sys.modules['cce.utils'] = utils
 except ImportError as e:
-    print(f"❌ 导入平级包失败: {e}")
     try:
         from src import utils
         sys.modules['cce.utils'] = utils
@@ -78,7 +73,6 @@ try:
     import data_utils
     sys.modules['cce.data_utils'] = data_utils
 except ImportError as e:
-    print(f"❌ 导入平级包失败: {e}")
     try:
         from src import data_utils
         sys.modules['cce.data_utils'] = data_utils
@@ -87,6 +81,18 @@ except ImportError as e:
         # 如果导入失败，设置为None  
         globals()['data_utils'] = None
 
+
+try: 
+    import metrics
+    sys.modules['cce.metrics'] = metrics
+except ImportError as e:
+    try:
+        from src import metrics
+        sys.modules['cce.metrics'] = metrics
+    except ImportError as e2:
+        print(f"❌ 备用导入平级包失败: {e2}")
+        # 如果导入失败，设置为None  
+        globals()['metrics'] = None
 
 # 定义from cce import *时导出的内容
 __all__ = [
