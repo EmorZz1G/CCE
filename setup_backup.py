@@ -7,6 +7,7 @@ This is a fallback setup.py for compatibility with older build tools.
 The main configuration is in pyproject.toml.
 """
 
+
 import os
 import sys
 from pathlib import Path
@@ -24,7 +25,7 @@ except ImportError:
 # Read package metadata
 def get_package_info():
     """Get package information from __init__.py"""
-    init_file = Path(__file__).parent / "src" / "cce" / "__init__.py"
+    init_file = Path(__file__).parent / "cce" / "__init__.py"
     if not init_file.exists():
         raise FileNotFoundError(f"Package init file not found: {init_file}")
     
@@ -116,8 +117,8 @@ setup(
     license=pkg_info['license'],
     
     # Package configuration
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
+    packages=find_packages(where="src", include=["cce*"]),  
+    package_dir={"": "src"},  # 顶级包（cce）的源码在src下
     include_package_data=True,
     package_data={
         "cce": ["*.yaml", "*.yml", "*.json", "*.txt"],

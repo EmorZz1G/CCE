@@ -786,3 +786,116 @@ def get_loader_segment(index, data_path, batch_size, win_size=100, step=1, mode=
                              num_workers=8,
                              drop_last=False)
     return data_loader
+
+
+class SupervisedDataset(Dataset):
+    """
+    选择split比例划分训练集和测试集
+    """
+    def __init__(self, data_y, data_labels, win_size, step, mode="train", train_test_split=0.8):
+        self.mode = mode
+        self.step = step
+        self.win_size = win_size
+        self.scaler = StandardScaler()
+        self.train_y = data_y[:(int)(len(data_y) * train_test_split)]
+        self.train_labels = data_labels[:(int)(len(data_labels) * train_test_split)]
+        self.test_y = data_y[int(len(data_y) * train_test_split):]
+        self.test_labels = data_labels[int(len(data_labels) * train_test_split):]
+        self.train_test_split = train_test_split
+        self.scaler.fit(self.train_y)
+        self.train_y = self.scaler.transform(self.train_y)
+        self.test_y = self.scaler.transform(self.test_y)
+        self.all_test_y = np.concatenate([self.train_y, self.test_y], axis=0)
+        self.all_test_labels = np.concatenate([self.train_labels, self.test_labels], axis=0)
+        self.train = self.train_y.astype(np.float32)
+        self.train_y = self.train
+        self.test = self.test_y.astype(np.float32)
+        self.test_y = self.test
+        self.test_labels = self.test_labels.astype(np.float32)
+        self.train_labels = self.train_labels.astype(np.float32)
+        
+
+    def __len__(self):
+        if self.mode == "train":
+            return (self.train.shape[0] - self.win_size) // self.step + 1
+        elif (self.mode == 'test'):
+            return (self.test.shape[0] - self.win_size) // self.win_size + 1
+        elif (self.mode == 'all_test' or self.mode == 'all'):
+            return (self.all_test_y.shape[0] - self.win_size) // self.win_size + 1
+
+    def __getitem__(self, index):
+        index = index * self.step
+        if self.mode == "train":
+            return np.float32(self.train[index:index + self.win_size]), np.float32(
+                self.train_labels[index:index + self.win_size])
+        elif (self.mode == 'test'):
+            return np.float32(self.test[
+                                index // self.step * self.win_size:index // self.step * self.win_size + self.win_size]), np.float32(
+                self.test_labels[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size])
+        elif (self.mode == 'all_test' or self.mode == 'all'):
+            return np.float32(self.all_test_y[
+                                index // self.step * self.win_size:index // self.step * self.win_size + self.win_size]), np.float32(
+                self.all_test_labels[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size])
+        
+
+class RandomSupervisedDataset(Dataset):
+    """
+    采样anomaly_ratio的比率，保证训练集中有anomaly_ratio比例的异常样本
+    固定随机种子seed，保证每次采样结果一致
+    """
+    def __init__(self, data_y, data_labels, win_size, step=1, mode="train",
+                 anomaly_ratio=0.1,
+                 train_split_max=0.3,
+                 seed=42):
+        self.mode = mode
+        self.step = step
+        # set seed
+        # np.random.seed(seed)
+        # torch.manual_seed(seed)
+        # random.seed(seed)
+        # 找到索引i，使得 sum(data_labels[:i])/i >= anomaly_ratio
+        idx = int(data_labels.shape[0] * anomaly_ratio)
+        train_idx_max = int(data_y.shape[0] * train_split_max)
+        while data_labels[:idx].sum() / idx < anomaly_ratio and idx < train_idx_max:
+            idx += 1
+        self.train_anomaly_ratio = train_anomaly_ratio = data_labels[:idx].sum() / idx
+        print(f"train anomaly ratio: {train_anomaly_ratio}, train length: {idx}")
+        self.test_anomaly_ratio = test_anomaly_ratio = data_labels[idx:].sum() / (len(data_labels) - idx)
+        print(f"test anomaly ratio: {test_anomaly_ratio}, test length: {len(data_labels) - idx}")
+        train_y = data_y[:idx]
+        train_labels = data_labels[:idx]
+        test_y = data_y[idx:]
+        test_labels = data_labels[idx:]
+        self.win_size = win_size
+        self.scaler = StandardScaler()
+        self.train_y = train_y
+        self.train_labels = train_labels
+        self.test_y = test_y
+        self.test_labels = test_labels
+        self.scaler.fit(self.train_y)
+        self.train_y = self.train = self.scaler.transform(self.train_y)
+        self.test_y = self.test = self.scaler.transform(self.test_y)
+        self.all_test_y = np.concatenate([self.train_y, self.test_y], axis=0)
+        self.all_test_labels = np.concatenate([self.train_labels, self.test_labels], axis=0)
+
+    def __len__(self):
+        if self.mode == "train":
+            return (self.train_y.shape[0] - self.win_size) // self.step + 1
+        elif (self.mode == 'test'):
+            return (self.test_y.shape[0] - self.win_size) // self.win_size + 1
+        elif (self.mode == 'all_test' or self.mode == 'all'):
+            return (self.all_test_y.shape[0] - self.win_size) // self.win_size + 1
+
+    def __getitem__(self, index):
+        index = index * self.step
+        if self.mode == "train":
+            return np.float32(self.train[index:index + self.win_size]), np.float32(
+                self.train_labels[index:index + self.win_size])
+        elif (self.mode == 'test'):
+            return np.float32(self.test[
+                                index // self.step * self.win_size:index // self.step * self.win_size + self.win_size]), np.float32(
+                self.test_labels[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size])
+        elif (self.mode == 'all_test' or self.mode == 'all'):
+            return np.float32(self.all_test_y[
+                                index // self.step * self.win_size:index // self.step * self.win_size + self.win_size]), np.float32(
+                self.all_test_labels[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size])

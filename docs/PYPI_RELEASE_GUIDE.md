@@ -102,7 +102,7 @@ twine upload dist/*
 pip install --index-url https://test.pypi.org/simple/ cce
 
 # 测试安装是否成功
-python -c "import cce; print(cce.__version__)"
+python -c "import cce; print(cce.__author__)"
 
 # 测试命令行工具
 cce --help
@@ -136,7 +136,7 @@ twine upload dist/*
 pip install cce
 
 # 测试安装
-python -c "import cce; print(cce.__version__)"
+python -c "import cce; print(cce.__author__)"
 cce --help
 ```
 

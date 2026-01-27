@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cce"
-version = "0.2.3"
+version = "0.3.3"
 description = "Confidence-Consistency Evaluation for Time Series Anomaly Detection"
 readme = "README.md"
 license = "MIT"
@@ -50,6 +50,7 @@ dependencies = [
     "tqdm>=4.60.0",
     "pyyaml>=5.4.0",
     "deprecated>=1.2.0",
+    "statsmodels"
 ]
 
 [project.optional-dependencies]
@@ -88,12 +89,12 @@ Changelog = "https://github.com/EmorZz1G/CCE/blob/main/CHANGELOG.md"
 cce = "cce.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "cce" = "src/cce", "cce.evaluation" = "src/evaluation", "cce.models" = "src/models", "cce.metrics" = "src/metrics", "cce.data_utils" = "src/data_utils", "src" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include =["cce", "evaluation", "metrics", "utils", "data_utils"]  # 显式列出所有顶级模块
-exclude = ["*.egg-info", ".cce", "scripts", "tests"]
+# 自动发现 src 下的所有包（包括 cce, evaluation, metrics 等）
+include = ["*"]
 
 
 [tool.setuptools.package-data]
