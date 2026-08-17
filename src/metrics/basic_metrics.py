@@ -5,7 +5,7 @@ import copy
 from itertools import groupby
 from operator import itemgetter
 
-METRIC_LIST = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'VUS-PR', 'AUC-PR', 'PA%K', 'TaPR', 'PATE']
+METRIC_LIST = ['CCE', 'CCE*', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'NAff-F1', 'AUC-ROC', 'VUS-ROC', 'VUS-PR', 'AUC-PR', 'PA%K', 'TaPR', 'PATE']
 
 try:
     from eTaPR_pkg.tapr import print_result, compute
@@ -138,7 +138,7 @@ class ConfidenceConsistencyEvaluation:
     4. 通过不确定度与真实标签的一致性来评估模型
     """
     
-    def __init__(self,  method='bayesian_v2', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False,
+    def __init__(self,  method='bayesian_v2', confidence_level=0.5, n_bootstrap_samples=100, positive_constraint=False, 
                  bayesian_scale=10):
         """
         初始化评估器
@@ -148,6 +148,7 @@ class ConfidenceConsistencyEvaluation:
             confidence_level: 置信区间水平, 默认为0.5。
         """
         self.n_bootstrap_samples = n_bootstrap_samples
+        self.confidence_level_ = confidence_level
         self.confidence_level = confidence_level
         self.method = method
         self.positive_constraint = positive_constraint
@@ -284,6 +285,7 @@ class ConfidenceConsistencyEvaluation:
         else:
             confidence = mu - self.confidence_level
         score = confidence * consistency
+        print(f'[DEBUG ANOM] confidence:{confidence}, consistency:{consistency}')
         return score
     
     def _normal_event_score(self, y_score):
@@ -292,9 +294,11 @@ class ConfidenceConsistencyEvaluation:
         consistency = np.exp(-uncertainty)
         if self.positive_constraint:
             confidence = max(1 - self.confidence_level - mu,0)
+            # confidence = 1 - self.confidence_level - mu # debug
         else:
             confidence = 1 - self.confidence_level - mu
         score = confidence * consistency
+        print(f'[DEBUG Norm] confidence:{confidence}, consistency:{consistency}')
         return score
     
     def _event_score(self, anom_uncertainty,normal_uncertainty):
@@ -338,6 +342,7 @@ class ConfidenceConsistencyEvaluation:
         glo_anom_score = self._anom_event_score(anom_list)
         glo_norm_score = self._normal_event_score(norm_list)
         glo_score = glo_anom_score * weight + glo_norm_score * (1 - weight)
+        
         return glo_score
     
     def compute_confidence_consistency_score(self, y_true, y_scores):
@@ -360,6 +365,7 @@ class ConfidenceConsistencyEvaluation:
         normal_events = convert_vector_to_events(1 - y_true)
         
         y_scores = (y_scores - min(y_scores)) / (max(y_scores) - min(y_scores) + 1e-8)
+        
         anom_uncertainty = []
         normal_uncertainty = []
         for st, ed in anom_events:
@@ -427,6 +433,8 @@ class basic_metricor():
         """
         if name == 'CCE':
             results = self.metric_CCE(labels, score, **kwargs)
+        elif name == 'CCE*':
+            results = self.metric_CCE(labels, score, positive_constraint=True, **kwargs)
         elif name == 'F1':
             results = self.metric_PointF1(labels, score, preds=preds)
         elif name == 'F1-PA':
@@ -445,6 +453,9 @@ class basic_metricor():
             results = self.metric_Affiliation(labels, score, preds=preds, **kwargs)
         elif name == 'UAff-F1':
             results = self.metric_UN_Affiliation(labels, score, pred=preds, **kwargs)
+        elif name == 'NAff-F1':
+            results = self.metric_UN_Affiliation(labels, score, pred=preds, **kwargs)
+            results = results[1]
         elif name == 'AUC-ROC':
             results = self.metric_ROC(labels, score)
         elif name == 'AUC-PR':
@@ -530,9 +541,9 @@ class basic_metricor():
         F1_Per_K = PointF1PA1
         return F1_Per_K, Pre, Rec
     
-    def metric_CCE(self, labels, scores, method='bayesian_v2', confidence_level=0.5, n_samples=30, positive_constraint=False, bayesian_scale=10):
+    def metric_CCE(self, labels, scores, method='bayesian_v2', confidence_level=0.5, n_samples=30, positive_constraint=False, bayesian_scale=10, weight=0.5):
         cce = ConfidenceConsistencyEvaluation(method, confidence_level, n_samples, positive_constraint, bayesian_scale)
-        score = cce.compute_confidence_consistency_score_v2(labels, scores)
+        score = cce.compute_confidence_consistency_score_v2(labels, scores, weight=weight)
         return score
 
     def metric_PA_percentile_K(self, labels, score, preds=None, num_K=100):

@@ -3,7 +3,7 @@
 
 # 数据集路径 - 用户可以根据需要修改
 # 支持绝对路径和相对路径
-datasets_path: ./datasets
+datasets_path: /home/zzj/projects/FTSAD/datasets
 
 # 日志级别: DEBUG, INFO, WARNING, ERROR
 log_level: INFO

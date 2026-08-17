@@ -461,3 +461,22 @@ def run_DualTF(data_train, data_test, win_size=36, nest_length=None,
     
     score = f_score + t_score
     return score.ravel()
+
+
+def run_StreamVAE(data_train, data_test, win_size=100, latent_dim=64, batch_size=128, epochs=50,
+                  patience=10, lr=1e-3, validation_size=0.2, target_kl=100.0, event_l1_weight=1e-3):
+    from ..models.StreamVAE import StreamVAE
+    eps = 1e-8
+    mu = data_train.mean(axis=0, keepdims=True)
+    sd = data_train.std(axis=0, keepdims=True)
+    sd = np.where(sd == 0, eps, sd)
+    data_train_n = (data_train - mu) / sd
+    data_test_n = (data_test - mu) / sd
+    clf = StreamVAE(
+        win_size=win_size, feats=data_test.shape[1], latent_dim=latent_dim,
+        batch_size=batch_size, epochs=epochs, patience=patience, lr=lr,
+        validation_size=validation_size, target_kl=target_kl, event_l1_weight=event_l1_weight,
+    )
+    clf.fit(data_train_n)
+    score = clf.decision_function(data_test_n)
+    return score.ravel()

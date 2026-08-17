@@ -20,7 +20,7 @@ metric_list_ = ['CCE', 'AUC-ROC', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eT
 metric_list_ = ['CCE', 'AUC-ROC', 'F1', 'F1-PA', 'Reduced-F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'VUS-ROC']
 metric_list_ = ['CCE', 'AUC-ROC', 'eTaPR', 'UAff-F1', 'VUS-ROC']
 metric_list_ = ['CCE', 'AUC-ROC', 'F1', 'Aff-F1', 'VUS-ROC', 'PATE']
-metric_list_ = ['CCE', 'AUC-ROC',  'F1', 'eTaPR', 'Aff-F1', 'VUS-ROC']
+metric_list_ = ['CCE', 'AUC-ROC',  'F1', 'eTaPR', 'UAff-F1', 'VUS-ROC']
 # metric_list_ = ['CCE', 'UAff-F1', 'VUS-ROC']
 
 def expected_ranking(df):
@@ -121,7 +121,8 @@ def ana_msl_etal():
     # 输出latex
     case_name_list = ['MSL','SMD','PSM','SWAT','CC','Avg.']
     # case_name_list = df['case_name'].unique().tolist()
-    model_list = ['LOF', 'IForest',  'LSTMAD', 'USAD' , 'A.T.', 'Donut',  'TimesNet']
+    model_list = ['LOF', 'IForest',  'LSTMAD', 'USAD' , 'A.T.', 'TimesNet','StreamVAE']
+    df = df[df['model_name'].isin(model_list)]
     print(df['model_name'].unique())
     # df根据model_list排序
     df = df.sort_values(by='model_name', key=lambda x: x.map(lambda name: model_list.index(name)))
@@ -140,7 +141,7 @@ def ana_msl_etal():
         else:
             df_case = df[df['case_name'] == case_name]
         try:
-            df_case = df_case.pivot(index='model_name', columns='metric_name', values='val')
+            df_case = df_case.pivot_table(index='model_name', columns='metric_name', values='val',aggfunc='first')
             df_case = df_case.reindex(columns=metric_list_)
         except:
             print(df_case.head(30))
@@ -208,8 +209,8 @@ def ana_msl_etal():
         f.write(latex_str)
 
 def main():
-    ana_UCR()
-    # ana_msl_etal()
+    # ana_UCR()
+    ana_msl_etal()
 
 
 if __name__ == '__main__':

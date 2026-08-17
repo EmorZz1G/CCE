@@ -359,6 +359,9 @@ try:
     from cce.config import get_datasets_path
     data_pth = get_datasets_path()
     print(f"Using datasets path from CCE config: {data_pth}")
+    file_pth = os.path.dirname(os.path.abspath(__file__))
+    file_pth = upd(upd(file_pth))
+    proj_pth = upd(file_pth)
 except ImportError:
     # 如果无法导入新配置系统，使用传统方式
     file_pth = os.path.dirname(os.path.abspath(__file__))
@@ -412,13 +415,13 @@ def generate_dataset(case_idx=0, init_seed=42):
 
 
 real_world_configs = [
-    {'dataset_name': 'MSL'},
-    {'dataset_name': 'SMD_Ori_Pikled', 'index': "1-1"},
-    {'dataset_name': 'SMD_Ori_Pikled', 'index': "2-1"},
-    {'dataset_name': 'SMD_Ori_Pikled', 'index': "3-1"},
-    {'dataset_name': 'PSM'},
-    {'dataset_name': 'SWAT'},
-    {'dataset_name': 'NIPS_TS_Creditcard'}
+    {'dataset_name': 'MSL'}, # 0
+    {'dataset_name': 'SMD_Ori_Pikled', 'index': "1-1"}, #1
+    {'dataset_name': 'SMD_Ori_Pikled', 'index': "2-1"},#2
+    {'dataset_name': 'SMD_Ori_Pikled', 'index': "3-1"},#3
+    {'dataset_name': 'PSM'},#4
+    {'dataset_name': 'SWAT'},#5
+    {'dataset_name': 'NIPS_TS_Creditcard'}#6
 ]
 
 REAL_WORLD_CASE_NUM = len(real_world_configs)

@@ -1,8 +1,8 @@
-default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'PATE']
+default_baseline_list = ['CCE', 'F1', 'F1-PA', 'Reduced-F1', 'R-based F1', 'eTaPR', 'Aff-F1', 'UAff-F1', 'AUC-ROC', 'VUS-ROC', 'PATE', 'CCE*']
 model_list = ['LOF', 'IForest', 'PCA', 'LSTMAD', 'USAD', 'AnomalyTransformer', 'TimesNet', 'Donut']
 
 Unsupervise_AD_Pool = ['FFT', 'SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS', 'Random']
-Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2', 'DualTF']
+Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2', 'DualTF','StreamVAE']
 
 model_sets = set(Unsupervise_AD_Pool+Semisupervise_AD_Pool)
 
@@ -22,7 +22,7 @@ from src.metrics.basic_metrics import basic_metricor, METRIC_LIST
 log_dir = os.path.join(proj_pth, 'logs', 'RealWorldAD')
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
-output_path = os.path.join(log_dir, 'real_model_performance1.csv')
+output_path = os.path.join(log_dir, 'real_model_performance.csv')
 
 import argparse
 import time
